@@ -2,6 +2,7 @@ from blueprints import db
 from flask_restful import fields
 from datetime import datetime
 
+
 class Recipes(db.Model):
     __tablename__ = "recipes"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -22,25 +23,25 @@ class Recipes(db.Model):
         'userID': fields.Integer,
         'name': fields.String,
         'methodID': fields.Integer,
-        'beanID' : fields.Integer,
-        'beanName' : fields.String,
-        'beanProcess' : fields.String,
-        'beanRoasting' : fields.String,
+        'beanID': fields.Integer,
+        'beanName': fields.String,
+        'beanProcess': fields.String,
+        'beanRoasting': fields.String,
         'rating': fields.Float,
         'favoriteCount': fields.Integer,
-        'difficulty' : fields.Integer,
-        'createdAt' : fields.DateTime
+        'difficulty': fields.Integer,
+        'createdAt': fields.DateTime
     }
 
-
-    def __init__(self, userID, name, methodID, beanID, beanName, beanProcess, beanRoasting, rating, favoriteCount, difficulty):
+    def __init__(self, userID, name, methodID, beanID, beanName, beanProcess,
+                 beanRoasting, rating, favoriteCount, difficulty):
         self.userID = userID
         self.name = name
         self.methodID = methodID
         self.beanID = beanID
         self.beanName = beanName
-        self.beanProcess = beanProcess    
-        self.beanRoasting = beanRoasting    
+        self.beanProcess = beanProcess
+        self.beanRoasting = beanRoasting
         self.rating = rating
-        self.favoriteCount = favoriteCount    
+        self.favoriteCount = favoriteCount
         self.difficulty = difficulty
