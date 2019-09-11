@@ -25,4 +25,34 @@ class UserResource(Resource):
         return {'code': 404, 'message': 'User Not Found'}, 404
 
 
+class UserListResource(Resource):
+
+    def __init__(self):
+        pass
+
+    def options(self):
+        return {'code': 200, 'message': 'oke'}, 200
+
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('p', type=int, location='args', default=1)
+        parser.add_argument('rp', type=int, location='args', default=25)
+        data = parser.parse_args()
+
+        offset = (data['p'] * data['rp']) - data['rp']
+
+        userQry = Users.query
+
+        users = []
+        for user in userQry.limit(data['rp']).offset(offset).all():
+            users.append(
+                marshal(user, Users.responseFieldsJwt))
+
+        if users == []:
+            return {'code': 404, 'message': 'User Not Found'}, 404
+        else:
+            return {'code': 200, 'message': 'oke', 'data': users}, 200
+
+
+api.add_resource(UserListResource, '')
 api.add_resource(UserResource, '', '/<id>')
