@@ -37,13 +37,10 @@ class Users(db.Model):
         'role': fields.Integer
     }
 
-    def __init__(self, email, password, name, brewCount,
-                 recipeCount, photo, status, role):
+    def __init__(self, email, password, name, photo):
         self.email = email
         self.password = password
         self.name = name
-        self.brewCount = brewCount
-        self.recipeCount = recipeCount
         self.photo = photo
         self.status = 1
         self.role = 0
