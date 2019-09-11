@@ -1,3 +1,4 @@
+from flask import Flask, request
 import json
 import os
 # Import yang dibutuhkan untuk database
@@ -81,22 +82,20 @@ def after_request(response):
         requestData = request.args.to_dict()
 
     data = {
-            'method': request.method,
-            'code': response.status,
-            'uri': request.full_path,
-            'request': requestData,
-            'response': json.loads(response.data.decode('utf-8'))
+        'method': request.method,
+        'code': response.status,
+        'uri': request.full_path,
+        'request': requestData,
+        'response': json.loads(response.data.decode('utf-8'))
     }
     app.logger.warning("REQUEST_LOG\t%s",
                        json.dumps(data))
     return response
 
-
-from blueprints.step.resources import bp_steps
-from blueprints.recipe.resources import bp_recipes
-from blueprints.method.resources import bp_methods
 from blueprints.user.resources import bp_users
-from flask import Flask, request
+from blueprints.method.resources import bp_methods
+from blueprints.recipe.resources import bp_recipes
+from blueprints.step.resources import bp_steps
 
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(bp_methods, url_prefix='/methods')
