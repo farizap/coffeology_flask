@@ -90,8 +90,14 @@ def after_request(response):
     return response
 
 
-# from blueprints.auth import bp_auth
+from blueprints.user.resources import bp_users
+from blueprints.method.resources import bp_methods
+from blueprints.recipe.resources import bp_recipes
+from blueprints.step.resources import bp_steps
 
-# app.register_blueprint(bp_auth, url_prefix='/token')
+app.register_blueprint(bp_users, url_prefix='/users')
+app.register_blueprint(bp_methods, url_prefix='/methods')
+app.register_blueprint(bp_recipes, url_prefix='/recipes')
+app.register_blueprint(bp_steps, url_prefix='/steps')
 
 db.create_all()
