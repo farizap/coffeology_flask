@@ -24,6 +24,16 @@ class UserResource(Resource):
                     'data': marshal(userQry, Users.responseFieldsJwt)}
         return {'code': 404, 'message': 'User Not Found'}, 404
 
+    def delete(self, id):
+        userQry = Users.query.get(id)
+        if userQry is None:
+            return {'code': 404, 'status': 'User Not Found'}, 404
+
+        db.session.delete(userQry)
+        db.session.commit()
+
+        return {'code': 200, 'message': 'User Deleted'}, 200
+
 
 class UserListResource(Resource):
 

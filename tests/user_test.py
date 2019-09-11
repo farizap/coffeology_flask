@@ -25,7 +25,7 @@ class TestUserCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-# user get by id
+# user get all
     def test_user_get_all_valid(self, client):
         # token = create_token_non_internal()
         res = client.get('/users',
@@ -33,6 +33,23 @@ class TestUserCrud():
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
+
+# user delete by id
+    def test_user_delete_valid(self, client):
+        # token = create_token_non_internal()
+        res = client.delete('/users/1',
+                            content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def test_user_delete_invalid(self, client):
+        # token = create_token_non_internal()
+        res = client.delete('/users/-1',
+                            content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 404
 
 # user options
     def test_user_options_by_id_valid(self, client):
@@ -42,7 +59,7 @@ class TestUserCrud():
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
-    
+
     def test_user_options_valid(self, client):
         # token = create_token_non_internal()
         res = client.options('/users',
