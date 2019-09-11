@@ -1,6 +1,7 @@
 from blueprints import db
 from flask_restful import fields
 
+
 class Users(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -18,25 +19,26 @@ class Users(db.Model):
         'email': fields.String,
         'password': fields.String,
         'name': fields.String,
-        'brewCount' : fields.Integer,
-        'recipeCount' : fields.Integer,
-        'photo' : fields.String,
+        'brewCount': fields.Integer,
+        'recipeCount': fields.Integer,
+        'photo': fields.String,
         'status': fields.Integer,
-        'role' : fields.Integer
+        'role': fields.Integer
     }
 
     responseFieldsJwt = {
         'id': fields.Integer,
         'email': fields.String,
         'name': fields.String,
-        'brewCount' : fields.Integer,
-        'recipeCount' : fields.Integer,
-        'photo' : fields.String,
+        'brewCount': fields.Integer,
+        'recipeCount': fields.Integer,
+        'photo': fields.String,
         'status': fields.Integer,
-        'role' : fields.Integer
+        'role': fields.Integer
     }
 
-    def __init__(self, email, password, name, brewCount, recipeCount, photo, status, role):
+    def __init__(self, email, password, name, brewCount,
+                 recipeCount, photo, status, role):
         self.email = email
         self.password = password
         self.name = name
@@ -45,5 +47,3 @@ class Users(db.Model):
         self.photo = photo
         self.status = 1
         self.role = 0
-
-    
