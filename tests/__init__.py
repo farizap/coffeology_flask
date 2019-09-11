@@ -1,4 +1,6 @@
-import pytest, json, logging
+import pytest
+import json
+import logging
 from flask import Flask, request, json
 from blueprints import app, db
 from app import cache
@@ -7,9 +9,11 @@ from blueprints.recipe.model import Recipes
 from blueprints.user.model import Users
 from blueprints.step.model import Steps
 
+
 def call_client(request):
     client = app.test_client()
     return client
+
 
 @pytest.fixture
 def client(request):
@@ -22,7 +26,8 @@ def reset_database():
     db.create_all()
 
     method = Methods("name", "icon", 1)
-    recipe = Recipes(1, "name", 1, 1, "beanName", "beanProcess", "beanRoasting", 1, 1, 1)
+    recipe = Recipes(1, "name", 1, 1, "beanName",
+                     "beanProcess", "beanRoasting", 1, 1, 1)
     user = Users("email@email.com", "password", "name", 1, 1, "photo", 1, 1)
     step = Steps(1, 1, 1, "note", 1, 1)
 
@@ -32,6 +37,7 @@ def reset_database():
     db.session.add(user)
     db.session.add(step)
     db.session.commit()
+
 
 def create_token_non_internal():
     pass
@@ -45,9 +51,10 @@ def create_token_non_internal():
 
     #     ## do request
     #     req = call_client(request)
-    #     res = req.post('/token', data=json.dumps(data), content_type='application/json') # seperti nembak API luar (contoh weather.io)
+    #     res = req.post('/token', data=json.dumps(data),
+    #                    content_type='application/json')
 
-    #     ## store response
+    # # store response
     #     res_json = json.loads(res.data)
 
     #     logging.warning('RESULT : %s', res_json)
@@ -77,8 +84,8 @@ def create_token_internal():
 
     #     ## do request
     #     req = call_client(request)
-    #     res = req.post('/token/admin', data=json.dumps(data), content_type='application/json') # seperti nembak API luar (contoh weather.io)
-
+    #     res = req.post('/token/admin', data=json.dumps(data),
+    #                    content_type='application/json')
     #     ## store response
     #     res_json = json.loads(res.data)
 
@@ -94,5 +101,3 @@ def create_token_internal():
     #     return res_json['token']
     # else:
     #     return token
-    
-        
