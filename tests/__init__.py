@@ -6,6 +6,7 @@ from blueprints import app, db
 from app import cache
 from blueprints.method.model import Methods
 from blueprints.recipe.model import Recipes
+from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.user.model import Users
 from blueprints.step.model import Steps
 
@@ -30,10 +31,12 @@ def reset_database():
                      "beanProcess", "beanRoasting", 1, 1, 1)
     user = Users("email@email.com", "password", "name", 1, 1, "photo", 1, 1)
     step = Steps(1, 1, 1, "note", 1, 1)
+    recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note")
 
     # save users to database
     db.session.add(method)
     db.session.add(recipe)
+    db.session.add(recipeDetail)
     db.session.add(user)
     db.session.add(step)
     db.session.commit()
