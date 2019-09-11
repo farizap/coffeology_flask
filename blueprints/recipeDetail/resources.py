@@ -32,9 +32,9 @@ class RecipeDetailsListResource(Resource):
                 recipeID=data['recipeID'])
 
         recipeDetails = []
-        for recipeDetail in recipeDetailQry.limit(data['rp']).offset(offset).all():
+        for recipe in recipeDetailQry.limit(data['rp']).offset(offset).all():
             recipeDetails.append(
-                marshal(recipeDetail, RecipeDetails.responseFields))
+                marshal(recipe, RecipeDetails.responseFields))
 
         if recipeDetails == []:
             return {'code': 404, 'message': 'RecipeDetail Not Found'}, 404
