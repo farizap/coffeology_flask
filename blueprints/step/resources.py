@@ -25,9 +25,9 @@ class StepListResource(Resource):
         data = parser.parse_args()
 
         offset = (data['p'] * data['rp']) - data['rp']
-        
+
         stepQry = Steps.query
-        
+
         # to filter by receipeID
         if data['recipeID'] is not None:
             stepQry = stepQry.filter_by(recipeID=data['recipeID'])
@@ -38,9 +38,9 @@ class StepListResource(Resource):
         for step in stepQry.limit(data['rp']).offset(offset).all():
             steps.append(marshal(step, Steps.responseFields))
         if steps == []:
-            return {'code': 404, 'message': 'Step Not Found'}, 404, {'Content-Type': 'application/json'}
+            return {'code': 404, 'message': 'Step Not Found'}, 404
         else:
-            return {'code': 200, 'message': 'oke', 'data': steps}, 200, {'Content-Type': 'application/json'}
+            return {'code': 200, 'message': 'oke', 'data': steps}, 200
 
 
 api.add_resource(StepListResource, '')
