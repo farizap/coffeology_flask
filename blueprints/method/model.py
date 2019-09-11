@@ -1,6 +1,7 @@
 from blueprints import db
 from flask_restful import fields
 
+
 class Methods(db.Model):
     __tablename__ = "methods"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -12,13 +13,10 @@ class Methods(db.Model):
         'id': fields.Integer,
         'name': fields.String,
         'icon': fields.String,
-        'difficulty' : fields.Integer
+        'difficulty': fields.Integer
     }
 
     def __init__(self, name, icon, difficulty):
         self.name = name
         self.icon = icon
         self.difficulty = difficulty
-
-
-    
