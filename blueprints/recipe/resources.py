@@ -8,6 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_claims
 bp_recipes = Blueprint('recipes', __name__)
 api = Api(bp_recipes)
 
+
 class RecipesResource(Resource):
 
     def __init__(self):
@@ -19,11 +20,12 @@ class RecipesResource(Resource):
     def get(self, id):
         RecipeQry = Recipes.query.get(id)
         if RecipeQry is not None:
-            return {'code': 200, 'message': 'oke', 'data' : marshal(RecipeQry, Recipes.responseFields)}, {'Content-Type': 'application/json'}
-        return {'code': 404, 'message': 'Recipe Not Found'}, 404, {'Content-Type': 'application/json'}
+            return {'code': 200, 'message': 'oke',
+                    'data': marshal(RecipeQry, Recipes.responseFields)}, 200
+        return {'code': 404, 'message': 'Recipe Not Found'}, 404
+
 
 class RecipesListResource(Resource):
-
     def __init__(self):
         pass
 
@@ -36,15 +38,16 @@ class RecipesListResource(Resource):
         parser.add_argument('rp', type=int, location='args', default=25)
         parser.add_argument('userID', type=int, location='args')
         parser.add_argument('methodID', type=int, location='args')
-        parser.add_argument('orderby', location='args', choices=('favoriteCount', 'difficulty'))
+        parser.add_argument('orderby', location='args',
+                            choices=('favoriteCount', 'difficulty'))
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
         data = parser.parse_args()
 
         offset = (data['p'] * data['rp']) - data['rp']
-        
+
         recipeQry = Recipes.query
 
-        # to filter by userID or methodID 
+        # to filter by userID or methodID
         if data['userID'] is not None:
             recipeQry = recipeQry.filter_by(userID=data['userID'])
         if data['methodID'] is not None:
@@ -68,9 +71,9 @@ class RecipesListResource(Resource):
             recipes.append(marshal(recipe, Recipes.responseFields))
 
         if recipes == []:
-            return {'code': 404, 'message': 'Recipe Not Found'}, 404, {'Content-Type': 'application/json'}
+            return {'code': 404, 'message': 'Recipe Not Found'}, 404
         else:
-            return {'code': 200, 'message': 'oke', 'data' : recipes}, 200, {'Content-Type': 'application/json'}
+            return {'code': 200, 'message': 'oke', 'data': recipes}, 200
 
 
 api.add_resource(RecipesListResource, '')
