@@ -16,7 +16,7 @@ class MethodsResource(Resource):
 
     def options(self):
         return {'code': 200, 'message': 'oke'}, 200
-    
+
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
@@ -24,7 +24,7 @@ class MethodsResource(Resource):
         data = parser.parse_args()
 
         offset = (data['p'] * data['rp']) - data['rp']
-        
+
         methodsQry = Methods.query
 
         methods = []
@@ -32,9 +32,10 @@ class MethodsResource(Resource):
             methods.append(marshal(method, Methods.responseFields))
         if methods == []:
             pass
-            # return {'code': 404, 'message': 'Method Not Found'}, 404, {'Content-Type': 'application/json'}
         else:
-            return {'code': 200, 'message': 'oke', 'data': methods}, 200, {'Content-Type': 'application/json'}
+            return {'code': 200,
+                    'message': 'oke',
+                    'data': methods}, 200, {'Content-Type': 'application/json'}
 
 
 api.add_resource(MethodsResource, '')
