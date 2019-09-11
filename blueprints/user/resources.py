@@ -20,8 +20,9 @@ class UserResource(Resource):
     def get(self, id):
         userQry = Users.query.get(id)
         if userQry is not None:
-            return {'code': 200, 'message': 'oke', 'data' : marshal(userQry, Users.responseFieldsJwt)}, {'Content-Type': 'application/json'}
-        return {'code': 404, 'message': 'User Not Found'}, 404, {'Content-Type': 'application/json'}
+            return {'code': 200, 'message': 'oke',
+                    'data': marshal(userQry, Users.responseFieldsJwt)}
+        return {'code': 404, 'message': 'User Not Found'}, 404
 
 
 api.add_resource(UserResource, '', '/<id>')
