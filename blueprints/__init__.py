@@ -95,11 +95,13 @@ def after_request(response):
 from blueprints.user.resources import bp_users
 from blueprints.method.resources import bp_methods
 from blueprints.recipe.resources import bp_recipes
+from blueprints.recipeDetail.resources import bp_recipeDetails
 from blueprints.step.resources import bp_steps
 
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(bp_methods, url_prefix='/methods')
 app.register_blueprint(bp_recipes, url_prefix='/recipes')
+app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
 app.register_blueprint(bp_steps, url_prefix='/steps')
 
 db.create_all()

@@ -15,7 +15,7 @@ class RecipeDetails(db.Model):
     aftertaste = db.Column(db.Integer, nullable=False)
     balance = db.Column(db.Integer, nullable=False)
     globalTaste = db.Column(db.Integer, nullable=False)
-    note = db.Column(db.Text, nullable=False)
+    note = db.Column(db.String(250), nullable=False)
 
     responseFields = {
         'id': fields.Integer,
@@ -29,7 +29,7 @@ class RecipeDetails(db.Model):
         'aftertaste': fields.Integer,
         'balance': fields.Integer,
         'globalTaste': fields.Integer,
-        'note': fields.Text
+        'note': fields.String
     }
 
     def __init__(self, recipeID, fragrance, aroma, cleanliness, sweetness,

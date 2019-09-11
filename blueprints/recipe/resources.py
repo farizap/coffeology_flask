@@ -18,10 +18,10 @@ class RecipesResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
-        RecipeQry = Recipes.query.get(id)
-        if RecipeQry is not None:
+        recipeQry = Recipes.query.get(id)
+        if recipeQry is not None:
             return {'code': 200, 'message': 'oke',
-                    'data': marshal(RecipeQry, Recipes.responseFields)}, 200
+                    'data': marshal(recipeQry, Recipes.responseFields)}, 200
         return {'code': 404, 'message': 'Recipe Not Found'}, 404
 
 
