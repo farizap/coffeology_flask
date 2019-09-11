@@ -1,6 +1,7 @@
 from blueprints import db
 from flask_restful import fields
 
+
 class Steps(db.Model):
     __tablename__ = "steps"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -13,12 +14,12 @@ class Steps(db.Model):
 
     responseFields = {
         'id': fields.Integer,
-        'recipeID' : fields.Integer,
-        'stepNumber' : fields.Integer,
+        'recipeID': fields.Integer,
+        'stepNumber': fields.Integer,
         'stepTypeID': fields.Integer,
-        'note' : fields.String,
-        'time' : fields.Integer,
-        'amount' : fields.Integer
+        'note': fields.String,
+        'time': fields.Integer,
+        'amount': fields.Integer
     }
 
     def __init__(self, recipeID, stepNumber, stepTypeID, note, time, amount):
@@ -28,5 +29,3 @@ class Steps(db.Model):
         self.note = note
         self.time = time
         self.amount = amount
-
-    
