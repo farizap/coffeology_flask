@@ -1,10 +1,12 @@
 from flask import Flask, request
-import json, os
+import json
+import os
 # Import yang dibutuhkan untuk database
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_jwt_claims
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
 from datetime import timedelta
 from functools import wraps
 from flask_cors import CORS
@@ -22,12 +24,13 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
 jwt = JWTManager(app)
 
+
 def internal_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if not claims['status']:  # If berjalan jika statement True, jadi 'not False' = True
+        if not claims['status']:
             return {'status': 'FORBIDDEN', 'message': 'Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
@@ -35,12 +38,13 @@ def internal_required(fn):
 
 # Buat Decorator untuk non-internal
 
+
 def non_internal_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['status']:  # If berjalan jika statement True, jadi 'not False' = True
+        if claims['status']:
             return {'status': 'FORBIDDEN', 'message': 'Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
@@ -58,12 +62,10 @@ except Exception as e:
     raise e
 
 
-
 # Setting Database
 app.config['APP_DEBUG'] = True
 # localhost aka 127.0.0.1
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Altabatch3@ecommerce.ctfwww9400s4.ap-southeast-1.rds.amazonaws.com:3306/ecommerce'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -79,19 +81,27 @@ def after_request(response):
     except Exception as e:
         requestData = request.args.to_dict()
 
+    data = {
+        'method': request.method,
+        'code': response.status,
+        'uri': request.full_path,
+        'request': requestData,
+        'response': json.loads(response.data.decode('utf-8'))
+    }
     app.logger.warning("REQUEST_LOG\t%s",
-                       json.dumps({
-                           'method': request.method,
-                           'code': response.status,
-                           'uri': request.full_path,
-                           'request': requestData,
-                           'response': json.loads(response.data.decode('utf-8'))
-                       }))
+                       json.dumps(data))
     return response
 
+from blueprints.user.resources import bp_users
+from blueprints.method.resources import bp_methods
+from blueprints.recipe.resources import bp_recipes
+from blueprints.recipeDetail.resources import bp_recipeDetails
+from blueprints.step.resources import bp_steps
 
-# from blueprints.auth import bp_auth
-
-# app.register_blueprint(bp_auth, url_prefix='/token')
+app.register_blueprint(bp_users, url_prefix='/users')
+app.register_blueprint(bp_methods, url_prefix='/methods')
+app.register_blueprint(bp_recipes, url_prefix='/recipes')
+app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
+app.register_blueprint(bp_steps, url_prefix='/steps')
 
 db.create_all()
