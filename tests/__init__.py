@@ -11,17 +11,17 @@ from blueprints.user.model import Users
 from blueprints.step.model import Steps
 
 
-def call_client(request):
+def callClient(request):
     client = app.test_client()
     return client
 
 
 @pytest.fixture
 def client(request):
-    return call_client(request)
+    return callClient(request)
 
 
-def reset_database():
+def resetDatabase():
 
     db.drop_all()
     db.create_all()
@@ -29,7 +29,8 @@ def reset_database():
     method = Methods("name", "icon", 1)
     recipe = Recipes(1, "name", 1, 1, "beanName",
                      "beanProcess", "beanRoasting", 1, 1, 1)
-    user = Users("email@email.com", "Password1", "name", "photo")
+    user = Users("user@user.com", "Password1", "name", "photo")
+    admin = Users("admin@admin.com", "Password1", "name", "photo")
     step = Steps(1, 1, 1, "note", 1, 1)
     recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note")
 
@@ -38,69 +39,68 @@ def reset_database():
     db.session.add(recipe)
     db.session.add(recipeDetail)
     db.session.add(user)
+    db.session.add(admin)
+    admin.role = 1
     db.session.add(step)
     db.session.commit()
 
 
-def create_token_non_internal():
-    pass
-    # token = cache.get('token-non-internal')
-    # if token is None:
-    #     ## prepare request input
-    #     data = {
-    #         'username': 'tes',
-    #         'password': 'tes'
-    #     }
+def createTokenNonInternal():
+    token = cache.get('token-non-internal')
+    if token is None:
+        # prepare request input
+        data = {
+            'email': 'user@user.com',
+            'password': 'Password1'
+        }
 
-    #     ## do request
-    #     req = call_client(request)
-    #     res = req.post('/token', data=json.dumps(data),
-    #                    content_type='application/json')
+        # do request
+        req = callClient(request)
+        res = req.post('/token', data=json.dumps(data),
+                       content_type='application/json')
 
-    # # store response
-    #     res_json = json.loads(res.data)
+    # store response
+        res_json = json.loads(res.data)
 
-    #     logging.warning('RESULT : %s', res_json)
+        logging.warning('RESULT : %s', res_json)
 
-    #     ## assert / compare with expected result
-    #     assert res.status_code == 200
+        # assert / compare with expected result
+        assert res.status_code == 200
 
-    #     ## save token into cache
-    #     cache.set('token-non-internal', res_json['token'], timeout=60)
+        # save token into cache
+        cache.set('token-non-internal', res_json['token'], timeout=60)
 
-    #     ## return because it useful for other test
-    #     return res_json['token']
-    # else:
-    #     return token
+        # return because it useful for other test
+        return res_json['token']
+    else:
+        return token
 
 
-def create_token_internal():
-    pass
-    # token = cache.get('token-internal')
-    # if token is None:
-    #     ## prepare request input
-    #     data = {
-    #         'username': 'tes',
-    #         'password': 'tes',
-    #         'email' : 'tes@tes.com'
-    #     }
+def createTokenInternal():
+    token = cache.get('token-internal')
+    if token is None:
+        # prepare request input
+        data = {
+            'email': 'admin@admin.com',
+            'password': 'Password1'
+        }
 
-    #     ## do request
-    #     req = call_client(request)
-    #     res = req.post('/token/admin', data=json.dumps(data),
-    #                    content_type='application/json')
-    #     ## store response
-    #     res_json = json.loads(res.data)
+        # do request
+        req = callClient(request)
+        res = req.post('/token', data=json.dumps(data),
+                       content_type='application/json')
+        # store response
+        res_json = json.loads(res.data)
 
-    #     logging.warning('RESULT : %s', res_json)
+        logging.warning('RESULT : %s', res_json)
 
-    #     ## assert / compare with expected result
-    #     assert res.status_code == 200
+        # assert / compare with expected result
+        assert res.status_code == 200
 
-    #     ## save token into cache
-    #     cache.set('token-internal', res_json['token'], timeout=60)
+        # save token into cache
+        cache.set('token-internal', res_json['token'], timeout=60)
 
-    #     ## return because it useful for other test
-    #     return res_json['token']
-    # else:
-    #     return token
+        # return because it useful for other test
+        return res_json['token']
+    else:
+        return token

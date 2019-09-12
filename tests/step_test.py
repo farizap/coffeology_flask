@@ -1,14 +1,14 @@
 import json
-from . import app, client, cache, create_token_non_internal
-from . import create_token_internal, reset_database
+from . import app, client, cache, createTokenNonInternal
+from . import createTokenInternal, resetDatabase
 
 
 class TestStepCrud():
 
-    reset_database()
+    resetDatabase()
 
 # step get all
-    def test_step_get_all_valid(self, client):
+    def testStepGetAllValid(self, client):
         # token = create_token_non_internal()
         data = {
             'recipeID': 1
@@ -19,7 +19,7 @@ class TestStepCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def test_step_get_all_invalid(self, client):
+    def testStepGetAllInvalid(self, client):
         # token = create_token_non_internal()
         data = {
             'recipeID': -1
@@ -31,7 +31,7 @@ class TestStepCrud():
         assert res.status_code == 404
 
 # step options
-    def test_step_options_valid(self, client):
+    def testStepOptionsValid(self, client):
         # token = create_token_non_internal()
         res = client.options('/steps',
                              content_type='application/json')
