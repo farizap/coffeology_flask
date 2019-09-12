@@ -40,29 +40,33 @@ class RecipesResource(Resource):
         dataRecipesDict = ast.literal_eval(data['recipes'])
         dataRecipeDetailsDict = ast.literal_eval(data['recipeDetails'])
         dataSteps = ast.literal_eval(data['steps'])
-        
+
         # check all data's recipes is not null
         for key in dataRecipesDict:
             if type(dataRecipesDict[key]) == int:
                 continue
 
-            dataRecipesDict[key] = dataRecipesDict[key].strip()  # to remove space at end
+            # to remove space at end
+            dataRecipesDict[key] = dataRecipesDict[key].strip()
             if dataRecipesDict[key] == "":
-                return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
-                   
+                return {'code': 400,
+                        'message': f'{key} tidak boleh kosong'}, 400
 
         # check all data's recipeDetails is not null
         for key in dataRecipeDetailsDict:
             if type(dataRecipeDetailsDict[key]) == int:
                 continue
-            
-            dataRecipeDetailsDict[key] = dataRecipeDetailsDict[key].strip()  # to remove space at end
+
+            # to remove space at end
+            dataRecipeDetailsDict[key] = dataRecipeDetailsDict[key].strip()
             if dataRecipeDetailsDict[key] == "":
-                return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
+                return {'code': 400,
+                        'message': f'{key} tidak boleh kosong'}, 400
 
         # check all data's steps is not null
         if dataSteps == []:
-            return {'code': 400, 'message': 'Steps tidak boleh kosong'}, 400
+            return {'code': 400,
+                    'message': 'Steps tidak boleh kosong'}, 400
         for stepDict in dataSteps:
             for key in stepDict:
                 if type(stepDict[key]) == int:
@@ -70,39 +74,37 @@ class RecipesResource(Resource):
 
                 stepDict[key] = stepDict[key].strip()  # to remove space at end
                 if stepDict[key] == "":
-                    return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
+                    return {'code': 400,
+                            'message': f'{key} tidak boleh kosong'}, 400
 
         recipeDataInt = ['methodID', 'beanID', 'difficulty']
-        
+
         # validate input data int for recipe
         for data in recipeDataInt:
             try:
                 dataRecipesDict[data] = int(dataRecipesDict[data])
             except Exception as e:
                 return {'code': 400, 'message': f'{data} harus integer'}, 400
-        
+
         # validate input data int for recipeDetails
         for key in dataRecipeDetailsDict:
             if key != 'note':
                 try:
-                    dataRecipeDetailsDict[key] = int(dataRecipeDetailsDict[key])
+                    dataRecipeDetailsDict[key] = int(
+                        dataRecipeDetailsDict[key])
                 except Exception as e:
-                    return {'code': 400, 'message': f'{key} harus integer'}, 400
+                    return {'code': 400,
+                            'message': f'{key} harus integer'}, 400
 
+        # validate input data int for recipeDetails
         for stepDict in dataSteps:
             for key in stepDict:
                 if key != 'note':
                     try:
                         stepDict[key] = int(stepDict[key])
                     except Exception as e:
-                        return {'code': 400, 'message': f'{key} harus integer'}, 400
-                        
-        
-
-
-        
-
-        
+                        return {'code': 400,
+                                'message': f'{key} harus integer'}, 400
 
 
 class RecipesListResource(Resource):

@@ -9,6 +9,7 @@ import re
 bp_users = Blueprint('users', __name__)
 api = Api(bp_users)
 
+
 def isValidEmail(email):
     # to validate email
     pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
@@ -21,17 +22,19 @@ def isValidEmail(email):
 
 
 def isValidPassword(password):
-    # to validate password minimum 6 characters, at least one capital and one number
+    # to validate password, at least one capital and one number
     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
         return True
     else:
         return False
+
 
 def isValidName(name):
     # to validate name just alphabet
     if re.match(r"[A-Za-z]{2,25}( [A-Za-z]{2,25})?", name):
         return True
     return False
+
 
 class UserResource(Resource):
 
@@ -59,7 +62,7 @@ class UserResource(Resource):
         dataEmail = data['email'].strip()
         if isValidEmail(dataEmail) is False:
             return {'code': 400, 'message': 'Email is not valid'}, 400
-        
+
         # check if email has been used
         emailHasUsed = Users.query.filter_by(email=dataEmail).first()
         if emailHasUsed is not None:
@@ -68,7 +71,7 @@ class UserResource(Resource):
         dataPassword = data['password'].strip()
         if isValidPassword(dataPassword) is False:
             return {'code': 400, 'message': 'Password is not valid'}, 400
-        
+
         dataName = data['name'].strip()
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
