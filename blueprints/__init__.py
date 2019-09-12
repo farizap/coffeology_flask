@@ -30,8 +30,8 @@ def internal_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if not claims['status']:
-            return {'status': 'FORBIDDEN', 'message': 'Internal Only'}, 403
+        if claims['role'] == 0:
+            return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -44,8 +44,8 @@ def non_internal_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['status']:
-            return {'status': 'FORBIDDEN', 'message': 'Non-Internal Only'}, 403
+        if claims['role'] == 1:        
+            return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
     return wrapper

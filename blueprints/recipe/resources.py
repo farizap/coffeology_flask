@@ -24,6 +24,39 @@ class RecipesResource(Resource):
                     'data': marshal(recipeQry, Recipes.responseFields)}, 200
         return {'code': 404, 'message': 'Recipe Not Found'}, 404
 
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recipes', location='json')
+        parser.add_argument('recipeDetails', location='json')
+        parser.add_argument('steps', location='json')
+        data = parser.parse_args()
+
+        # check all data's recipes is not null
+        for key in data['recipes']:
+            if data['recipes'][key] == "":
+                return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
+            else:
+                data['recipes'][key].strip()  # to remove space at end
+
+        # check all data's recipeDetails is not null
+        for key in data['recipeDetails']:
+            if data['recipeDetails'][key] == "":
+                return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
+            else:
+                data['recipeDetails'][key].strip()  # to remove space at end
+
+        # check all data's steps is not null
+        if data['steps'] == []:
+            return {'code': 400, 'message': 'Steps tidak boleh kosong'}, 400
+        for stepDict in data['steps']:
+            for key in stepDict:
+                if stepDict[key] == "":
+                    return {'code': 400, 'message': f'{key} tidak boleh kosong'}, 400
+                else:
+                    stepDict[key].strip()  # to remove space at end
+
+        
+
 
 class RecipesListResource(Resource):
     def __init__(self):
