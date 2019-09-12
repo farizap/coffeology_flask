@@ -13,8 +13,8 @@ class Recipes(db.Model):
     beanName = db.Column(db.String(30), nullable=False)
     beanProcess = db.Column(db.String(30), nullable=False)
     beanRoasting = db.Column(db.String(30), nullable=False)
-    rating = db.Column(db.Float, nullable=False)
-    favoriteCount = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Float, nullable=False, default=0)
+    favoriteCount = db.Column(db.Integer, nullable=False, default=0)
     difficulty = db.Column(db.Integer, nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.now)
 

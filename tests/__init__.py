@@ -29,9 +29,9 @@ def reset_database():
     method = Methods("name", "icon", 1)
     recipe = Recipes(1, "name", 1, 1, "beanName",
                      "beanProcess", "beanRoasting", 1, 1, 1)
-    user = Users("email@email.com", "password", "name", "photo")
+    user = Users("email@email.com", "Password1", "name", "photo")
     step = Steps(1, 1, 1, "note", 1, 1)
-    recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note")
+    recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note")
 
     # save users to database
     db.session.add(method)

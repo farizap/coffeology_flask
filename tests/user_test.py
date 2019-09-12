@@ -9,7 +9,7 @@ class TestUserCrud():
     user_id = 0
 
 # user get by id
-    def test_user_get_by_id_valid(self, client):
+    def testUserGetByIDValid(self, client): 
         # token = create_token_non_internal()
         res = client.get('/users/1',
                          content_type='application/json')
@@ -17,7 +17,7 @@ class TestUserCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def test_user_get__by_id_invalid(self, client):
+    def testUserGetByIDInvalid(self, client):
         # token = create_token_non_internal()
         res = client.get('/users/-1',
                          content_type='application/json')
@@ -26,7 +26,7 @@ class TestUserCrud():
         assert res.status_code == 404
 
 # user get all
-    def test_user_get_all_valid(self, client):
+    def testUserGetAllValid(self, client):
         # token = create_token_non_internal()
         res = client.get('/users',
                          content_type='application/json')
@@ -35,12 +35,12 @@ class TestUserCrud():
         assert res.status_code == 200
 
 # user post
-    def test_user_post_valid(self, client):
+    def testUserPostValid(self, client):
         # token = create_token_non_internal()
         data = {
             'email': 'coba@coba.com',
-            'password': 'password1',
-            'name': 'name1',
+            'password': 'Password1',
+            'name': 'name',
             'photo': 'photo1'
         }
         res = client.post('/users', data=json.dumps(data),
@@ -50,12 +50,13 @@ class TestUserCrud():
         TestUserCrud.user_id = res_json['data']['id']
         assert res.status_code == 200
 
-    def test_user_post_invalid(self, client):
+    def testUserPostInvalidEmailHasBeenUsed(self, client):
         # token = create_token_non_internal()
         data = {
             'email': 'coba@coba.com',
-            'password': 'password1',
-            'name': 'name1'
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
         }
         res = client.post('/users', data=json.dumps(data),
                           content_type='application/json')
@@ -63,13 +64,69 @@ class TestUserCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
-# user post
+    def testUserPostInvalidEmailTooShort(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'c@c.c',
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.post('/users', data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPostInvalidWrongEmailType(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'cccc.cccc',
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.post('/users', data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+    
+    def testUserPostInvalidWrongPassword(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'coba1@coba.com',
+            'password': 'password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.post('/users', data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPostInvalidWrongName(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'coba1@coba.com',
+            'password': 'Password1',
+            'name': 'n4me',
+            'photo': 'photo'
+        }
+        res = client.post('/users', data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+# user put
     def test_user_put_valid(self, client):
         # token = create_token_non_internal()
         data = {
             'email': 'coba@coba.com',
             'password': 'password1',
-            'name': 'name1',
+            'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
             'photo': 'photo1'
@@ -86,7 +143,7 @@ class TestUserCrud():
         data = {
             'email': 'coba@coba.com',
             'password': 'password1',
-            'name': 'name1',
+            'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
             'photo': 'photo1'
