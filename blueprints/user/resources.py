@@ -4,9 +4,36 @@ from .model import Users
 from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
+import re
 
 bp_users = Blueprint('users', __name__)
 api = Api(bp_users)
+
+
+def isValidEmail(email):
+    # to validate email
+    pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
+    if len(email) > 7:
+        if re.match(pattern, email) is not None:
+            return True
+        return False
+    else:
+        return False
+
+
+def isValidPassword(password):
+    # to validate password, at least one capital and one number
+    if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
+        return True
+    else:
+        return False
+
+
+def isValidName(name):
+    # to validate name just alphabet
+    if re.match(r"[A-Za-z]{2,25}( [A-Za-z]{2,25})?", name):
+        return True
+    return False
 
 
 class UserResource(Resource):
@@ -32,8 +59,25 @@ class UserResource(Resource):
         parser.add_argument('photo', location='json', required=True)
         data = parser.parse_args()
 
-        user = Users(data['email'], data['password'],
-                     data['name'], data['photo'])
+        dataEmail = data['email'].strip()
+        if isValidEmail(dataEmail) is False:
+            return {'code': 400, 'message': 'Email is not valid'}, 400
+
+        # check if email has been used
+        emailHasUsed = Users.query.filter_by(email=dataEmail).first()
+        if emailHasUsed is not None:
+            return {'code': 400, 'message': 'Email has been used'}, 400
+
+        dataPassword = data['password'].strip()
+        if isValidPassword(dataPassword) is False:
+            return {'code': 400, 'message': 'Password is not valid'}, 400
+
+        dataName = data['name'].strip()
+        if isValidName(dataName) is False:
+            return {'code': 400, 'message': 'Name is not valid'}, 400
+
+        user = Users(dataEmail, dataPassword,
+                     dataName, data['photo'])
         db.session.add(user)
         db.session.commit()
 
@@ -107,10 +151,7 @@ class UserListResource(Resource):
             users.append(
                 marshal(user, Users.responseFieldsJwt))
 
-        if users == []:
-            return {'code': 404, 'message': 'User Not Found'}, 404
-        else:
-            return {'code': 200, 'message': 'oke', 'data': users}, 200
+        return {'code': 200, 'message': 'oke', 'data': users}, 200
 
 
 api.add_resource(UserListResource, '')

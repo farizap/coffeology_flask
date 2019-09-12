@@ -1,21 +1,21 @@
 import json
-from . import app, client, cache, create_token_non_internal
-from . import create_token_internal, reset_database
+from . import app, client, cache, createTokenNonInternal
+from . import createTokenInternal, resetDatabase
 
 
 class TestRecipeDetailCrud():
 
-    reset_database()
+    resetDatabase()
 
 # recipeDetail get all
-    def test_recipeDetail_get_all_valid_1(self, client):
+    def testRecipeDetailGetAllValid_1(self, client):
         # token = create_token_non_internal()
         res = client.get('/recipedetails', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def test_recipeDetail_get_all_valid_2(self, client):
+    def testRecipeDetailGetAllByRecipeIDValid(self, client):
         # token = create_token_non_internal()
         data = {
             'recipeID': 1
@@ -26,7 +26,7 @@ class TestRecipeDetailCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def test_recipeDetail_get_all_valid_3(self, client):
+    def testRecipeDetailGetAllByRecipeIDInvalid(self, client):
         # token = create_token_non_internal()
         data = {
             'recipeID': -1
@@ -39,7 +39,7 @@ class TestRecipeDetailCrud():
 
 # recipeDetail options
 
-    def test_recipeDetail_options_valid(self, client):
+    def testRecipeDetailOptionsValid(self, client):
         # token = create_token_non_internal()
         res = client.options('/recipedetails',
                              content_type='application/json')

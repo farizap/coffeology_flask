@@ -30,8 +30,8 @@ def internal_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if not claims['status']:
-            return {'status': 'FORBIDDEN', 'message': 'Internal Only'}, 403
+        if claims['role'] == 0:
+            return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -44,8 +44,8 @@ def non_internal_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['status']:
-            return {'status': 'FORBIDDEN', 'message': 'Non-Internal Only'}, 403
+        if claims['role'] == 1:        
+            return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -97,8 +97,10 @@ from blueprints.method.resources import bp_methods
 from blueprints.recipe.resources import bp_recipes
 from blueprints.recipeDetail.resources import bp_recipeDetails
 from blueprints.step.resources import bp_steps
+from blueprints.auth import bp_auth
 
 app.register_blueprint(bp_users, url_prefix='/users')
+app.register_blueprint(bp_auth, url_prefix='/token')
 app.register_blueprint(bp_methods, url_prefix='/methods')
 app.register_blueprint(bp_recipes, url_prefix='/recipes')
 app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
