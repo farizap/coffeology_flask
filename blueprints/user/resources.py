@@ -5,6 +5,7 @@ from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import re
+import hashlib
 
 bp_users = Blueprint('users', __name__)
 api = Api(bp_users)
@@ -37,7 +38,6 @@ def isValidName(name):
 
 
 class UserResource(Resource):
-
     def __init__(self):
         pass
 
@@ -47,14 +47,19 @@ class UserResource(Resource):
     def get(self, id):
         userQry = Users.query.get(id)
         if userQry is not None:
-            return {'code': 200, 'message': 'oke',
-                    'data': marshal(userQry, Users.responseFieldsJwt)}, 200
+            return {
+                'code': 200,
+                'message': 'oke',
+                'data': marshal(userQry, Users.responseFieldsJwt)
+            }, 200
         return {'code': 404, 'message': 'User Not Found'}, 404
 
     def post(self):
+        '''User register new account'''
+
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json', required=True)
-        parser.add_argument('password', location='json',  required=True)
+        parser.add_argument('password', location='json', required=True)
         parser.add_argument('name', location='json', required=True)
         parser.add_argument('photo', location='json', required=True)
         data = parser.parse_args()
@@ -76,20 +81,29 @@ class UserResource(Resource):
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
 
-        user = Users(dataEmail, dataPassword,
-                     dataName, data['photo'])
+        # password hashing
+        passwordHash = hashlib.md5(dataPassword.encode())
+
+        user = Users(dataEmail, passwordHash.hexdigest(), dataName,
+                     data['photo'])
         db.session.add(user)
         db.session.commit()
 
         app.logger.debug('DEBUG : %s', user)
 
-        return {'code': 200, 'message': 'oke',
-                'data': marshal(user, Users.responseFieldsJwt)}, 200
+        return {
+            'code': 200,
+            'message': 'oke',
+            'data': marshal(user, Users.responseFieldsJwt)
+        }, 200
 
     def put(self, id):
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json')
-        parser.add_argument('password', location='json',)
+        parser.add_argument(
+            'password',
+            location='json',
+        )
         parser.add_argument('name', location='json')
         parser.add_argument('brewCount', type=int, location='json')
         parser.add_argument('recipeCount', type=int, location='json')
@@ -114,8 +128,11 @@ class UserResource(Resource):
             userQry.photo = args['photo']
 
         db.session.commit()
-        return {'code': 200, 'message': 'oke',
-                'data': marshal(userQry, Users.responseFieldsJwt)}, 200
+        return {
+            'code': 200,
+            'message': 'oke',
+            'data': marshal(userQry, Users.responseFieldsJwt)
+        }, 200
 
     def delete(self, id):
         userQry = Users.query.get(id)
@@ -129,7 +146,6 @@ class UserResource(Resource):
 
 
 class UserListResource(Resource):
-
     def __init__(self):
         pass
 
@@ -148,8 +164,7 @@ class UserListResource(Resource):
 
         users = []
         for user in userQry.limit(data['rp']).offset(offset).all():
-            users.append(
-                marshal(user, Users.responseFieldsJwt))
+            users.append(marshal(user, Users.responseFieldsJwt))
 
         return {'code': 200, 'message': 'oke', 'data': users}, 200
 
