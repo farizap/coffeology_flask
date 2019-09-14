@@ -3,186 +3,150 @@ from . import app, client, cache, createTokenNonInternal
 from . import createTokenInternal, resetDatabase
 
 
-class TestUserCrud():
+class TestHistoryCrud():
 
     resetDatabase()
-    user_id = 0
+    historyID = 0
 
-# user get by id
-    def testUserGetByIDValid(self, client):
-        # token = create_token_non_internal()
-        res = client.get('/users/1',
+# history get all
+    def testHistoryGetAll(self, client):
+        token = createTokenNonInternal()
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def testUserGetByIDInvalid(self, client):
-        # token = create_token_non_internal()
-        res = client.get('/users/-1',
-                         content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 404
-
-# user get all
-    def testUserGetAllValid(self, client):
-        # token = create_token_non_internal()
-        res = client.get('/users',
+    def testHistoryGetAllDesc(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "sort": "desc"
+        }
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-# user post
-    def testUserPostValid(self, client):
-        # token = create_token_non_internal()
+    def testHistoryGetAllAsc(self, client):
+        token = createTokenNonInternal()
         data = {
-            'email': 'coba@coba.com',
-            'password': 'Password1',
-            'name': 'name',
-            'photo': 'photo1'
+            "sort": "asc"
         }
-        res = client.post('/users', data=json.dumps(data),
-                          content_type='application/json')
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
+                         query_string=data,
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
-        TestUserCrud.user_id = res_json['data']['id']
         assert res.status_code == 200
 
-    def testUserPostInvalidEmailHasBeenUsed(self, client):
-        # token = create_token_non_internal()
+# history post
+    def testHistoryPostValid(self, client):
+        token = createTokenNonInternal()
         data = {
-            'email': 'coba@coba.com',
-            'password': 'Password',
-            'name': 'name',
-            'photo': 'photo'
+            'recipeID': 1
         }
-        res = client.post('/users', data=json.dumps(data),
+        res = client.post('/history', data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+
+        TestHistoryCrud.historyID = res_json['data']['id']
+        assert res.status_code == 201
+
+    def testHistoryPostInvalidHasNotData(self, client):
+        token = createTokenNonInternal()
+        res = client.post('/history',
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
-    def testUserPostInvalidEmailTooShort(self, client):
-        # token = create_token_non_internal()
+# history put
+    def testHistoryPutValid(self, client):
+        token = createTokenInternal()
         data = {
-            'email': 'c@c.c',
-            'password': 'Password',
-            'name': 'name',
-            'photo': 'photo'
+            'userID': 1,
+            'recipeID': 1
         }
-        res = client.post('/users', data=json.dumps(data),
-                          content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 400
-
-    def testUserPostInvalidWrongEmailType(self, client):
-        # token = create_token_non_internal()
-        data = {
-            'email': 'cccc.cccc',
-            'password': 'Password',
-            'name': 'name',
-            'photo': 'photo'
-        }
-        res = client.post('/users', data=json.dumps(data),
-                          content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 400
-
-    def testUserPostInvalidWrongPassword(self, client):
-        # token = create_token_non_internal()
-        data = {
-            'email': 'coba1@coba.com',
-            'password': 'password',
-            'name': 'name',
-            'photo': 'photo'
-        }
-        res = client.post('/users', data=json.dumps(data),
-                          content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 400
-
-    def testUserPostInvalidWrongName(self, client):
-        # token = create_token_non_internal()
-        data = {
-            'email': 'coba1@coba.com',
-            'password': 'Password1',
-            'name': 'n4me',
-            'photo': 'photo'
-        }
-        res = client.post('/users', data=json.dumps(data),
-                          content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 400
-
-# user put
-    def testUserPutValid(self, client):
-        # token = create_token_non_internal()
-        data = {
-            'email': 'coba@coba.com',
-            'password': 'password1',
-            'name': 'name',
-            'brewCount': 1,
-            'recipeCount': 1,
-            'photo': 'photo1'
-        }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put(f'/history/{TestHistoryCrud.historyID}',
                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def testUserPutInvalidID(self, client):
-        # token = create_token_non_internal()
+    def testHistoryPutInvalidID(self, client):
+        token = createTokenInternal()
         data = {
-            'email': 'coba@coba.com',
-            'password': 'password1',
-            'name': 'name',
-            'brewCount': 1,
-            'recipeCount': 1,
-            'photo': 'photo1'
+            'userID': 1,
+            'recipeID': 1
         }
-        res = client.put('/users/-1', data=json.dumps(data),
+        res = client.put('/history/-10000', data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-# user delete by id
-    def testUserDeleteValid(self, client):
-        # token = create_token_non_internal()
-        res = client.delete('/users/1',
+    def testHistoryPutInvalidToken(self, client):
+        token = createTokenNonInternal()
+        data = {
+            'userID': 1,
+            'recipeID': 1
+        }
+        res = client.put('/history/1', data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 403
+
+# history delete by id
+    def testHistoryDeleteValid(self, client):
+        token = createTokenInternal()
+        res = client.delete(f'/history/{TestHistoryCrud.historyID}',
+                            headers={'Authorization': 'Bearer ' + token},
                             content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def testUserDeleteInvalidID(self, client):
-        # token = create_token_non_internal()
-        res = client.delete('/users/-1',
+    def testHistoryDeleteInvalidID(self, client):
+        token = createTokenInternal()
+        res = client.delete('/history/-1000',
+                            headers={'Authorization': 'Bearer ' + token},
                             content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-# user options
-    def testUserOptionsByIDValid(self, client):
-        # token = create_token_non_internal()
-        res = client.options('/users/1',
+    def testHistoryDeleteInvalidToken(self, client):
+        token = createTokenNonInternal()
+        res = client.delete('/history/1',
+                            headers={'Authorization': 'Bearer ' + token},
+                            content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 403
+
+# history options
+    def testHistoryOptionsByIDValid(self, client):
+        res = client.options('/history/1',
                              content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def testUserOptionsValid(self, client):
-        # token = create_token_non_internal()
-        res = client.options('/users',
+    def testHistoryOptionsValid(self, client):
+        res = client.options('/history',
                              content_type='application/json')
 
         res_json = json.loads(res.data)
