@@ -84,7 +84,7 @@ class UserResource(Resource):
         # password hashing
         passwordHash = hashlib.md5(dataPassword.encode())
 
-        user = Users(dataEmail, passwordHash.hexdigest(), dataName,
+        user = Users(dataEmail.lower(), passwordHash.hexdigest(), dataName,
                      data['photo'])
         db.session.add(user)
         db.session.commit()
@@ -92,10 +92,10 @@ class UserResource(Resource):
         app.logger.debug('DEBUG : %s', user)
 
         return {
-            'code': 200,
-            'message': 'oke',
+            'code': 201,
+            'message': 'created',
             'data': marshal(user, Users.responseFieldsJwt)
-        }, 200
+        }, 201
 
     def put(self, id):
         parser = reqparse.RequestParser()

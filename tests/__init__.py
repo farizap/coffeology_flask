@@ -1,6 +1,7 @@
 import pytest
 import json
 import logging
+import hashlib
 from flask import Flask, request, json
 from blueprints import app, db
 from app import cache
@@ -26,19 +27,24 @@ def resetDatabase():
     db.drop_all()
     db.create_all()
 
+    passwordHashed = hashlib.md5("Password1".encode()).hexdigest()
+
     method = Methods("name", "icon", 1)
-    recipe = Recipes(1, "name", 1, 1, "beanName",
-                     "beanProcess", "beanRoasting", 1, 1, 1)
-    user = Users("user@user.com", "Password1", "name", "photo")
-    admin = Users("admin@admin.com", "Password1", "name", "photo")
+    recipe = Recipes(1, "name", 1, 1, "beanName", "beanProcess",
+                     "beanRoasting", 1, 1, 1, 1)
+    user = Users("user@user.com", passwordHashed, "name", "photo")
+    user2 = Users("user2@user.com", passwordHashed, "name", "photo")
+    admin = Users("admin@admin.com", passwordHashed, "name", "photo")
     step = Steps(1, 1, 1, "note", 1, 1)
-    recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note")
+    recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
+                                 92)
 
     # save users to database
     db.session.add(method)
     db.session.add(recipe)
     db.session.add(recipeDetail)
     db.session.add(user)
+    db.session.add(user2)
     db.session.add(admin)
     admin.role = 1
     db.session.add(step)
@@ -49,17 +55,15 @@ def createTokenNonInternal():
     token = cache.get('token-non-internal')
     if token is None:
         # prepare request input
-        data = {
-            'email': 'user@user.com',
-            'password': 'Password1'
-        }
+        data = {'email': 'user2@user.com', 'password': 'Password1'}
 
         # do request
         req = callClient(request)
-        res = req.post('/token', data=json.dumps(data),
+        res = req.post('/token',
+                       data=json.dumps(data),
                        content_type='application/json')
 
-    # store response
+        # store response
         res_json = json.loads(res.data)
 
         logging.warning('RESULT : %s', res_json)
@@ -80,14 +84,12 @@ def createTokenInternal():
     token = cache.get('token-internal')
     if token is None:
         # prepare request input
-        data = {
-            'email': 'admin@admin.com',
-            'password': 'Password1'
-        }
+        data = {'email': 'admin@admin.com', 'password': 'Password1'}
 
         # do request
         req = callClient(request)
-        res = req.post('/token', data=json.dumps(data),
+        res = req.post('/token',
+                       data=json.dumps(data),
                        content_type='application/json')
         # store response
         res_json = json.loads(res.data)
