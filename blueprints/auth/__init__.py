@@ -49,21 +49,17 @@ class CreateTokenResources(Resource):
 
         # Hash inputtted password
         passwordHashed = hashlib.md5(body['password'].encode()).hexdigest()
-
         userQry = Users.query
-        userQry = userQry.filter_by(email=body['email'])
+        userQry = userQry.filter_by(email=body['email'].lower())
         userQry = userQry.filter_by(password=passwordHashed).first()
 
         if userQry is not None:
             user_data = marshal(userQry, Users.responseFieldsJwt)
-            token = create_access_token(identity=body['email'],
+            token = create_access_token(identity=body['email'].lower(),
                                         user_claims=user_data)
         else:
-            return {
-                'code': 401,
-                'message': 'UNATHORIZED invalid email or password'
-            }, 401
-        return {'code': 200, 'message': 'oke', 'data': token}, 200
+            return {'code': 401, 'message': 'invalid email or password'}, 401
+        return {'code': 200, 'message': 'oke', 'token': token}, 200
 
 
 class RefreshTokenResources(Resource):

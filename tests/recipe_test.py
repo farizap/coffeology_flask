@@ -9,7 +9,7 @@ class TestRecipeCrud():
 
 # recipe get by id
     def testRecipeGetByIDValid(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         res = client.get('/recipes/1',
                          content_type='application/json')
 
@@ -17,7 +17,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeGetByIDInvalid(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         res = client.get('/recipes/-1',
                          content_type='application/json')
 
@@ -26,14 +26,14 @@ class TestRecipeCrud():
 
 # recipe get all
     def testRecipeGetAllValid(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         res = client.get('/recipes', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_1(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         data = {
             'userID': 1,
             'methodID': 1,
@@ -47,7 +47,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_2(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         data = {
             'userID': 1,
             'methodID': 1,
@@ -61,7 +61,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_3(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         data = {
             'orderby': 'difficulty',
             'sort': 'asc'
@@ -73,7 +73,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_4(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         data = {
             'orderby': 'difficulty',
             'sort': 'desc'
@@ -85,7 +85,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeGetAllInvalidUsingParams(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         data = {
             'userID': -1,
             'methodID': -1
@@ -99,16 +99,16 @@ class TestRecipeCrud():
 # recipe post
 
     def testRecipePostValid(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -122,7 +122,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -151,23 +153,23 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
-        assert res.status_code == 200
+        assert res.status_code == 201
 
     def testRecipePostInvalidDataRecipe(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": " ",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -181,7 +183,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -210,23 +214,23 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataRecipeDetail(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -240,7 +244,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": " "
+                "note": " ",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -269,23 +275,23 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataStep(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -299,7 +305,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -328,23 +336,23 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataStepEmpty(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -358,27 +366,29 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": []
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataRecipeNotInteger(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": "methodID",
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -392,7 +402,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -421,23 +433,23 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataRecipeDetailNotInteger(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": 1,
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -451,7 +463,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -480,24 +494,24 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testRecipePostInvalidDataStepNotInteger(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             "recipes": {
                 "name": "name",
                 "methodID": "methodID",
-                "beanID": 1,
+                "originID": 1,
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1
-            },
+                "difficulty": 1,"time":40,"coffeeWeight":17,"water":200
+            },  
             "recipeDetails": {
                 "recipeID": 1,
                 "fragrance": 1,
@@ -510,7 +524,9 @@ class TestRecipeCrud():
                 "balance": 1,
                 "globalTaste": 1,
                 "body": 1,
-                "note": "note"
+                "note": "note",
+                "grindSize":2,
+                "waterTemp":93
             },
             "steps": [
                 {
@@ -539,7 +555,7 @@ class TestRecipeCrud():
                 }
             ]
         }
-        res = client.post('/recipes', data=json.dumps(data),
+        res = client.post('/recipes', data=json.dumps(data),headers={'Authorization':'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -548,7 +564,7 @@ class TestRecipeCrud():
 # recipe options
 
     def testRecipeOptionsByIDValid(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         res = client.options('/recipes/1',
                              content_type='application/json')
 
@@ -556,7 +572,7 @@ class TestRecipeCrud():
         assert res.status_code == 200
 
     def testRecipeOptionsValid(self, client):
-        # token = create_token_non_internal()
+        # token = createTokenNonInternal()
         res = client.options('/recipes',
                              content_type='application/json')
 

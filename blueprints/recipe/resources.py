@@ -1,8 +1,6 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
-from .model import Recipes
-from blueprints.recipeDetail.model import RecipeDetails
-from blueprints.step.model import Steps
+
 from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
@@ -11,9 +9,13 @@ import ast
 bp_recipes = Blueprint('recipes', __name__)
 api = Api(bp_recipes)
 
+# import model
+from blueprints.recipe.model import Recipes
+from blueprints.recipeDetail.model import RecipeDetails
+from blueprints.step.model import Steps
+
 
 class RecipesResource(Resource):
-
     def __init__(self):
         pass
 
@@ -23,12 +25,15 @@ class RecipesResource(Resource):
     def get(self, id):
         recipeQry = Recipes.query.get(id)
         if recipeQry is not None:
-            return {'code': 200, 'message': 'oke',
-                    'data': marshal(recipeQry, Recipes.responseFields)}, 200
+            return {
+                'code': 200,
+                'message': 'oke',
+                'data': marshal(recipeQry, Recipes.responseFields)
+            }, 200
         return {'code': 404, 'message': 'Recipe Not Found'}, 404
 
-    # @jwt_required
-    # @non_internal_required
+    @jwt_required
+    @non_internal_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('recipes', location='json')
@@ -49,24 +54,28 @@ class RecipesResource(Resource):
             # to remove space at end
             dataRecipesDict[key] = dataRecipesDict[key].strip()
             if dataRecipesDict[key] == "":
-                return {'code': 400,
-                        'message': f'{key} tidak boleh kosong'}, 400
+                return {
+                    'code': 400,
+                    'message': f'{key} tidak boleh kosong'
+                }, 400
 
         # check all data's recipeDetails is not null
         for key in dataRecipeDetailsDict:
             if type(dataRecipeDetailsDict[key]) == int:
                 continue
-
+            if type(dataRecipeDetailsDict[key]) == float:
+                continue
             # to remove space at end
             dataRecipeDetailsDict[key] = dataRecipeDetailsDict[key].strip()
             if dataRecipeDetailsDict[key] == "":
-                return {'code': 400,
-                        'message': f'{key} tidak boleh kosong'}, 400
+                return {
+                    'code': 400,
+                    'message': f'{key} tidak boleh kosong'
+                }, 400
 
         # check all data's steps is not null
         if dataSteps == []:
-            return {'code': 400,
-                    'message': 'Steps tidak boleh kosong'}, 400
+            return {'code': 400, 'message': 'Steps tidak boleh kosong'}, 400
         for stepDict in dataSteps:
             for key in stepDict:
                 if type(stepDict[key]) == int:
@@ -74,10 +83,12 @@ class RecipesResource(Resource):
 
                 stepDict[key] = stepDict[key].strip()  # to remove space at end
                 if stepDict[key] == "":
-                    return {'code': 400,
-                            'message': f'{key} tidak boleh kosong'}, 400
+                    return {
+                        'code': 400,
+                        'message': f'{key} tidak boleh kosong'
+                    }, 400
 
-        recipeDataInt = ['methodID', 'beanID', 'difficulty']
+        recipeDataInt = ['methodID', 'originID', 'difficulty']
 
         # validate input data int for recipe
         for data in recipeDataInt:
@@ -93,8 +104,10 @@ class RecipesResource(Resource):
                     dataRecipeDetailsDict[key] = int(
                         dataRecipeDetailsDict[key])
                 except Exception as e:
-                    return {'code': 400,
-                            'message': f'{key} harus integer'}, 400
+                    return {
+                        'code': 400,
+                        'message': f'{key} harus integer'
+                    }, 400
 
         # validate input data int for recipeDetails
         for stepDict in dataSteps:
@@ -103,8 +116,52 @@ class RecipesResource(Resource):
                     try:
                         stepDict[key] = int(stepDict[key])
                     except Exception as e:
-                        return {'code': 400,
-                                'message': f'{key} harus integer'}, 400
+                        return {
+                            'code': 400,
+                            'message': f'{key} harus integer'
+                        }, 400
+
+        # get claims
+        claims = get_jwt_claims()
+
+        # add dataRecipesDict to recipes model
+        recipe = Recipes(
+            claims['id'], dataRecipesDict['name'], dataRecipesDict['methodID'],
+            dataRecipesDict['originID'], dataRecipesDict['beanName'],
+            dataRecipesDict['beanProcess'], dataRecipesDict['beanRoasting'],
+            dataRecipesDict['difficulty'], dataRecipesDict['time'],
+            dataRecipesDict['coffeeWeight'], dataRecipesDict['water'])
+
+        db.session.add(recipe)
+        db.session.commit()
+
+        # add dataRecipeDetailsDict to RecipeDetails
+        recipeDetail = RecipeDetails(
+            recipe.id, dataRecipeDetailsDict['fragrance'],
+            dataRecipeDetailsDict['aroma'],
+            dataRecipeDetailsDict['cleanliness'],
+            dataRecipeDetailsDict['sweetness'], dataRecipeDetailsDict['taste'],
+            dataRecipeDetailsDict['acidity'],
+            dataRecipeDetailsDict['aftertaste'],
+            dataRecipeDetailsDict['balance'],
+            dataRecipeDetailsDict['globalTaste'],
+            dataRecipeDetailsDict['body'], dataRecipeDetailsDict['note'],
+            dataRecipeDetailsDict['grindSize'],
+            dataRecipeDetailsDict['waterTemp'])
+
+        db.session.add(recipeDetail)
+
+        # add dataSteps to Steps
+        for stepNumber,dataStep in enumerate(dataSteps,1):
+            step = Steps(recipe.id, stepNumber,
+                         dataStep['stepTypeID'], dataStep['note'],
+                         dataStep['time'], dataStep['amount'])
+
+            db.session.add(step)
+
+        db.session.commit()
+
+        return {'code': 201, 'message': 'created'}, 201
 
 
 class RecipesListResource(Resource):
@@ -120,7 +177,8 @@ class RecipesListResource(Resource):
         parser.add_argument('rp', type=int, location='args', default=25)
         parser.add_argument('userID', type=int, location='args')
         parser.add_argument('methodID', type=int, location='args')
-        parser.add_argument('orderby', location='args',
+        parser.add_argument('orderby',
+                            location='args',
                             choices=('favoriteCount', 'difficulty'))
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
         data = parser.parse_args()
