@@ -98,6 +98,7 @@ from blueprints.recipe.resources import bp_recipes
 from blueprints.recipeDetail.resources import bp_recipeDetails
 from blueprints.step.resources import bp_steps
 from blueprints.auth import bp_auth
+from blueprints.history.resources import bp_history
 
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(bp_auth, url_prefix='/token')
@@ -105,5 +106,6 @@ app.register_blueprint(bp_methods, url_prefix='/methods')
 app.register_blueprint(bp_recipes, url_prefix='/recipes')
 app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
 app.register_blueprint(bp_steps, url_prefix='/steps')
+app.register_blueprint(bp_history, url_prefix='/history')
 
 db.create_all()
