@@ -46,8 +46,9 @@ class HistoryListResource(Resource):
         historyList = []
         for history in histories.limit(data['rp']).offset(offset).all():
             recipeID = history.recipeID
-            recipe = marshal(recipes.get(recipeID), Recipes.responseFields)
-            historyList.append(recipe)
+            recipe = recipes.get(recipeID)
+            recipe.createdAt = history.createdAt
+            historyList.append(marshal(recipe, Recipes.responseFields))
         return {'code': 200, 'message': 'oke', 'data': historyList}, 200
 
 class HistoryResource(Resource):
