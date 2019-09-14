@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
 from .model import History
+from blueprints.recipe.model import Recipes
+from blueprints.step.model import Steps
 from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
@@ -32,16 +34,22 @@ class HistoryListResource(Resource):
 
         histories = History.query.filter_by(userID=claims['id'])
 
+        histories = histories.order_by(desc(History.id))
+
         if data['sort'] == 'desc':
-            histories = histories.order_by(desc(History.userID))
+            histories = histories.order_by(desc(History.id))
         elif data['sort'] == 'asc':
-            histories = histories.order_by((History.userID))
+            histories = histories.order_by((History.id))
+
+        recipes = Recipes.query
 
         historyList = []
         for history in histories.limit(data['rp']).offset(offset).all():
-            historyList.append(marshal(history, History.responseFields))
+            recipeID = history.recipeID
+            recipe = recipes.get(recipeID)
+            recipe.createdAt = history.createdAt
+            historyList.append(marshal(recipe, Recipes.responseFields))
         return {'code': 200, 'message': 'oke', 'data': historyList}, 200
-
 
 class HistoryResource(Resource):
 
