@@ -1,3 +1,10 @@
 {
-    "python.pythonPath": "/home/alta11/Python/Virtualenv/ecommerce_env/bin/python"
+    "python.pythonPath": "/home/fariz/.env/flask_env/bin/python",
+    "python.formatting.provider": "yapf",
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true
 }
