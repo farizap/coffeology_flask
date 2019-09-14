@@ -222,12 +222,28 @@ class RecipesListResource(Resource):
         recipes = []
         for recipe in recipeQry.limit(data['rp']).offset(offset).all():
             recipes.append(marshal(recipe, Recipes.responseFields))
+        return {'code': 200, 'message': 'oke', 'data': recipes}, 200
 
-        if recipes == []:
-            return {'code': 404, 'message': 'Recipe Not Found'}, 404
-        else:
-            return {'code': 200, 'message': 'oke', 'data': recipes}, 200
+
+class RecipesUserResource(Resource):
+    def __init__(self):
+        pass
+
+    def options(self):
+        return {'code': 200, 'message': 'oke'}, 200
+
+    @jwt_required
+    @non_internal_required
+    def get(self):
+        claims = get_jwt_claims()
+        recipes = Recipes.query.filter_by(userID=claims['id'])
+        
+        recipeList = []
+        for recipe in recipes.all():
+            recipeList.append(marshal(recipe, Recipes.responseFields))
+        return {'code': 200, 'message': 'oke', 'data': recipeList}, 200
 
 
 api.add_resource(RecipesListResource, '')
+api.add_resource(RecipesUserResource, '/user')
 api.add_resource(RecipesResource, '', '/<id>')
