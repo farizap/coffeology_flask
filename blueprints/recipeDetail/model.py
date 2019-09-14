@@ -15,7 +15,10 @@ class RecipeDetails(db.Model):
     aftertaste = db.Column(db.Integer, nullable=False)
     balance = db.Column(db.Integer, nullable=False)
     globalTaste = db.Column(db.Integer, nullable=False)
+    body = db.Column(db.Integer, nullable=False)
     note = db.Column(db.String(250), nullable=False)
+    grindSize = db.Column(db.Integer, nullable=False)
+    waterTemp = db.Column(db.Integer, nullable=False)
 
     responseFields = {
         'id': fields.Integer,
@@ -29,11 +32,15 @@ class RecipeDetails(db.Model):
         'aftertaste': fields.Integer,
         'balance': fields.Integer,
         'globalTaste': fields.Integer,
-        'note': fields.String
+        'body': fields.Integer,
+        'note': fields.String,
+        'grindSize': fields.Integer,
+        'waterTemp': fields.Integer,
     }
 
     def __init__(self, recipeID, fragrance, aroma, cleanliness, sweetness,
-                 taste, acidity, aftertaste, balance, globalTaste, note):
+                 taste, acidity, aftertaste, balance, globalTaste, body, note,
+                 grindSize, waterTemp):
         self.recipeID = recipeID
         self.fragrance = fragrance
         self.aroma = aroma
@@ -44,4 +51,7 @@ class RecipeDetails(db.Model):
         self.aftertaste = aftertaste
         self.balance = balance
         self.globalTaste = globalTaste
+        self.body = body
         self.note = note
+        self.grindSize = grindSize
+        self.waterTemp = waterTemp
