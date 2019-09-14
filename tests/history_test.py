@@ -69,8 +69,6 @@ class TestHistoryCrud():
                           content_type='application/json')
 
         res_json = json.loads(res.data)
-
-        TestHistoryCrud.historyID = res_json['data']['id']
         assert res.status_code == 403
 
     def testHistoryPostInvalidHasNotData(self, client):
