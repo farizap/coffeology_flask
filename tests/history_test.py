@@ -59,6 +59,20 @@ class TestHistoryCrud():
         TestHistoryCrud.historyID = res_json['data']['id']
         assert res.status_code == 201
 
+    def testHistoryPostInvalidToken(self, client):
+        token = createTokenInternal()
+        data = {
+            'recipeID': 1
+        }
+        res = client.post('/history', data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+
+        TestHistoryCrud.historyID = res_json['data']['id']
+        assert res.status_code == 403
+
     def testHistoryPostInvalidHasNotData(self, client):
         token = createTokenNonInternal()
         res = client.post('/history',

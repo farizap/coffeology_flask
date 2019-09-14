@@ -71,6 +71,9 @@ class RefreshTokenResources(Resource):
                                     user_claims=user_data)
         return {'code': 200, 'message': 'oke', 'data': token}, 200
 
+    def options(self):
+        return {'code': 200, 'message': 'oke'}, 200
+
 
 api.add_resource(CreateTokenResources, '')
 api.add_resource(RefreshTokenResources, '/refresh')
