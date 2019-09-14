@@ -23,13 +23,26 @@ class RecipesResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
-        recipeQry = Recipes.query.get(id)
-        if recipeQry is not None:
-            return {
-                'code': 200,
-                'message': 'oke',
-                'data': marshal(recipeQry, Recipes.responseFields)
-            }, 200
+        recipe = Recipes.query.get(id)
+
+        if recipe is not None:
+            recipeDetail = RecipeDetails.query.filter_by(
+                recipeID=recipe.id).first()
+            steps = Steps.query.filter_by(recipeID=recipe.id).all()
+
+            # create response data
+            resData = {}
+            resData['recipe'] = marshal(recipe, Recipes.responseFields)
+            resData['recipeDetails'] = marshal(recipeDetail,
+                                               RecipeDetails.responseFields)
+
+            stepList = []
+            for step in steps:
+                stepList.append(marshal(step, Steps.responseFields))
+
+            resData['recipeSteps'] = stepList
+
+            return {'code': 200, 'message': 'oke', 'data': resData}, 200
         return {'code': 404, 'message': 'Recipe Not Found'}, 404
 
     @jwt_required
@@ -152,10 +165,10 @@ class RecipesResource(Resource):
         db.session.add(recipeDetail)
 
         # add dataSteps to Steps
-        for stepNumber,dataStep in enumerate(dataSteps,1):
-            step = Steps(recipe.id, stepNumber,
-                         dataStep['stepTypeID'], dataStep['note'],
-                         dataStep['time'], dataStep['amount'])
+        for stepNumber, dataStep in enumerate(dataSteps, 1):
+            step = Steps(recipe.id, stepNumber, dataStep['stepTypeID'],
+                         dataStep['note'], dataStep['time'],
+                         dataStep['amount'])
 
             db.session.add(step)
 
