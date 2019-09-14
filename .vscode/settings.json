@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/fariz/.env/flask_env/bin/python",
+    "python.pythonPath": "/home/alta11/Python/Virtualenv/coffeology/bin/python",
     "python.formatting.provider": "yapf",
     "python.testing.pytestArgs": [
         "tests"
