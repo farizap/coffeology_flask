@@ -18,6 +18,7 @@ before_script:
 script:
 - sudo chmod +x deploy.sh
 - sudo chmod 600 deploy_rsa
+- sudo echo -e "class Config():\n\tpass\nclass DevelopmentConfig(Config):\n\tDEBUG = True\n\tSQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:Altabatch3@coffeologydb.cve4hruuas3j.ap-southeast-1.rds.amazonaws.com:3306/coffeology'\n\nclass TestingConfig(Config):\n\tTESTING = True\n\tSQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:Altabatch3@coffeologydb.cve4hruuas3j.ap-southeast-1.rds.amazonaws.com:3306/coffeologyTesting'" > config.py
 after_script:
 - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 - ls
