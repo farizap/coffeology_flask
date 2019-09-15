@@ -69,7 +69,7 @@ class RecipesResource(Resource):
             if dataRecipesDict[key] == "":
                 return {
                     'code': 400,
-                    'message': f'{key} tidak boleh kosong'
+                    'message': f'{key} Resep tidak boleh kosong'
                 }, 400
 
         # check all data's recipeDetails is not null
@@ -83,7 +83,7 @@ class RecipesResource(Resource):
             if dataRecipeDetailsDict[key] == "":
                 return {
                     'code': 400,
-                    'message': f'{key} tidak boleh kosong'
+                    'message': f'{key} Resep Detail tidak boleh kosong'
                 }, 400
 
         # check all data's steps is not null
@@ -98,7 +98,7 @@ class RecipesResource(Resource):
                 if stepDict[key] == "":
                     return {
                         'code': 400,
-                        'message': f'{key} tidak boleh kosong'
+                        'message': f'{key} Step tidak boleh kosong'
                     }, 400
 
         recipeDataInt = ['methodID', 'originID', 'difficulty']
@@ -108,7 +108,7 @@ class RecipesResource(Resource):
             try:
                 dataRecipesDict[data] = int(dataRecipesDict[data])
             except Exception as e:
-                return {'code': 400, 'message': f'{data} harus integer'}, 400
+                return {'code': 400, 'message': f'{data} Resep harus integer'}, 400
 
         # validate input data int for recipeDetails
         for key in dataRecipeDetailsDict:
@@ -121,7 +121,7 @@ class RecipesResource(Resource):
                     except Exception as e:
                         return {
                             'code': 400,
-                            'message': f'{key} harus integer'
+                            'message': f'{key} Resep Detail harus integer'
                         }, 400
                 else:
                     try:
@@ -130,7 +130,7 @@ class RecipesResource(Resource):
                     except Exception as e:
                         return {
                             'code': 400,
-                            'message': f'{key} harus float'
+                            'message': f'{key} Resep Detail harus float'
                         }, 400
                 
 
@@ -143,7 +143,7 @@ class RecipesResource(Resource):
                     except Exception as e:
                         return {
                             'code': 400,
-                            'message': f'{key} harus integer'
+                            'message': f'{key} Step harus integer'
                         }, 400
 
         # get claims
