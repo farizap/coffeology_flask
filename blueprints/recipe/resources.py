@@ -74,9 +74,9 @@ class RecipesResource(Resource):
 
         # check all data's recipeDetails is not null
         for key in dataRecipeDetailsDict:
-            if type(dataRecipeDetailsDict[key]) == int:
-                continue
             if type(dataRecipeDetailsDict[key]) == float:
+                continue
+            if type(dataRecipeDetailsDict[key]) == int:
                 continue
             # to remove space at end
             dataRecipeDetailsDict[key] = dataRecipeDetailsDict[key].strip()
@@ -112,15 +112,27 @@ class RecipesResource(Resource):
 
         # validate input data int for recipeDetails
         for key in dataRecipeDetailsDict:
+            
             if key != 'note':
-                try:
-                    dataRecipeDetailsDict[key] = int(
-                        dataRecipeDetailsDict[key])
-                except Exception as e:
-                    return {
-                        'code': 400,
-                        'message': f'{key} harus integer'
-                    }, 400
+                if key == 'waterTemp' or key == 'grindSize':
+                    try:
+                        dataRecipeDetailsDict[key] = int(
+                            dataRecipeDetailsDict[key])
+                    except Exception as e:
+                        return {
+                            'code': 400,
+                            'message': f'{key} harus integer'
+                        }, 400
+                else:
+                    try:
+                        dataRecipeDetailsDict[key] = float(
+                            dataRecipeDetailsDict[key])
+                    except Exception as e:
+                        return {
+                            'code': 400,
+                            'message': f'{key} harus float'
+                        }, 400
+                
 
         # validate input data int for recipeDetails
         for stepDict in dataSteps:

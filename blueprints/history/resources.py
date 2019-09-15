@@ -74,6 +74,14 @@ class HistoryResource(Resource):
 
         app.logger.debug('DEBUG : %s', history)
 
+
+        # add brewCount
+        recipe = Recipes.query.get(data['recipeID'])
+        recipeBrewCount = marshal(recipe, Recipes.responseFields)['brewCount']
+        
+        recipe.brewCount = recipeBrewCount + 1
+        db.session.commit()
+
         return {
             'code': 201,
             'message': 'oke',
