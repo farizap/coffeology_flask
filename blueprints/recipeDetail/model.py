@@ -6,16 +6,16 @@ class RecipeDetails(db.Model):
     __tablename__ = "recipeDetails"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     recipeID = db.Column(db.Integer, nullable=False)
-    fragrance = db.Column(db.Integer, nullable=False)
-    aroma = db.Column(db.Integer, nullable=False)
-    cleanliness = db.Column(db.Integer, nullable=False)
-    sweetness = db.Column(db.Integer, nullable=False)
-    taste = db.Column(db.Integer, nullable=False)
-    acidity = db.Column(db.Integer, nullable=False)
-    aftertaste = db.Column(db.Integer, nullable=False)
-    balance = db.Column(db.Integer, nullable=False)
-    globalTaste = db.Column(db.Integer, nullable=False)
-    body = db.Column(db.Integer, nullable=False)
+    fragrance = db.Column(db.Float, nullable=False)
+    aroma = db.Column(db.Float, nullable=False)
+    cleanliness = db.Column(db.Float, nullable=False)
+    sweetness = db.Column(db.Float, nullable=False)
+    taste = db.Column(db.Float, nullable=False)
+    acidity = db.Column(db.Float, nullable=False)
+    aftertaste = db.Column(db.Float, nullable=False)
+    balance = db.Column(db.Float, nullable=False)
+    globalTaste = db.Column(db.Float, nullable=False)
+    body = db.Column(db.Float, nullable=False)
     note = db.Column(db.String(250), nullable=False)
     grindSize = db.Column(db.Integer, nullable=False)
     waterTemp = db.Column(db.Integer, nullable=False)
@@ -23,16 +23,16 @@ class RecipeDetails(db.Model):
     responseFields = {
         'id': fields.Integer,
         'recipeID': fields.Integer,
-        'fragrance': fields.Integer,
-        'aroma': fields.Integer,
-        'cleanliness': fields.Integer,
-        'sweetness': fields.Integer,
-        'taste': fields.Integer,
-        'acidity': fields.Integer,
-        'aftertaste': fields.Integer,
-        'balance': fields.Integer,
-        'globalTaste': fields.Integer,
-        'body': fields.Integer,
+        'fragrance': fields.Float,
+        'aroma': fields.Float,
+        'cleanliness': fields.Float,
+        'sweetness': fields.Float,
+        'taste': fields.Float,
+        'acidity': fields.Float,
+        'aftertaste': fields.Float,
+        'balance': fields.Float,
+        'globalTaste': fields.Float,
+        'body': fields.Float,
         'note': fields.String,
         'grindSize': fields.Integer,
         'waterTemp': fields.Integer,
