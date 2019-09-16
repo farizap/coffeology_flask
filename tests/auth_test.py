@@ -51,6 +51,18 @@ class TestAuthCrud():
                         content_type='application/json')
 
         res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testAuthPostInvalid(self, client):
+        data = {
+            'email': 'user2@user.com',
+            'password': 'passWord1'
+        }
+        res = client.post('/token',
+                        data=json.dumps(data),
+                        content_type='application/json')
+
+        res_json = json.loads(res.data)
         assert res.status_code == 401
 
     def testAuthPostInvalidEmail(self, client):
