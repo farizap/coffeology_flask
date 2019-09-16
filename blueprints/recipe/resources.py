@@ -112,7 +112,7 @@ class RecipesResource(Resource):
 
         # validate input data int for recipeDetails
         for key in dataRecipeDetailsDict:
-            
+
             if key != 'note':
                 if key == 'waterTemp' or key == 'grindSize':
                     try:
@@ -132,7 +132,6 @@ class RecipesResource(Resource):
                             'code': 400,
                             'message': f'{key} harus float'
                         }, 400
-                
 
         # validate input data int for recipeDetails
         for stepDict in dataSteps:
@@ -206,11 +205,33 @@ class RecipesListResource(Resource):
                             location='args',
                             choices=('favoriteCount', 'difficulty'))
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
+        # Fariz
+        parser.add_argument('methods', location='args')
+        parser.add_argument('search', location='args')
+        parser.add_argument('origins', location='args')
+        parser.add_argument('sortby', location='args')
+
         data = parser.parse_args()
 
         offset = (data['p'] * data['rp']) - data['rp']
 
         recipeQry = Recipes.query
+
+        # Fariz
+        # filter by search
+        if data['search'] is not None:
+            recipeQry = recipeQry.filter(
+                Recipes.name.like('%' + data['search'] + '%'))
+
+        # filter by methods
+        if data['methods'] is not None:
+            methods = data['methods'].split(',')
+            recipeQry = recipeQry.filter(Recipes.methodID.in_(methods))
+
+        # filter by origins
+        if data['origins'] is not None:
+            origins = data['origins'].split(',')
+            recipeQry = recipeQry.filter(Recipes.originID.in_(origins))
 
         # to filter by userID or methodID
         if data['userID'] is not None:
@@ -249,7 +270,7 @@ class RecipesUserResource(Resource):
     def get(self):
         claims = get_jwt_claims()
         recipes = Recipes.query.filter_by(userID=claims['id'])
-        
+
         recipeList = []
         for recipe in recipes.all():
             recipeList.append(marshal(recipe, Recipes.responseFields))
