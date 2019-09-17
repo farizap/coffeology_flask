@@ -13,6 +13,7 @@ class Users(db.Model):
     photo = db.Column(db.String(250), nullable=False)
     status = db.Column(db.Integer, nullable=False)
     role = db.Column(db.Integer, nullable=False)
+    bio = db.Column(db.String(250), nullable=False)
 
     responseFieldsDetails = {
         'id': fields.Integer,
@@ -23,9 +24,9 @@ class Users(db.Model):
         'recipeCount': fields.Integer,
         'photo': fields.String,
         'status': fields.Integer,
-        'role': fields.Integer
+        'role': fields.Integer,
+        'bio': fields.String
     }
-
 
     responseFieldsJwt = {
         'id': fields.Integer,
@@ -35,13 +36,15 @@ class Users(db.Model):
         'recipeCount': fields.Integer,
         'photo': fields.String,
         'status': fields.Integer,
-        'role': fields.Integer
+        'role': fields.Integer,
+        'bio': fields.String
     }
 
-    def __init__(self, email, password, name, photo):
+    def __init__(self, email, password, name, photo, bio):
         self.email = email
         self.password = password
         self.name = name
         self.photo = photo
         self.status = 1
         self.role = 0
+        self.bio = bio
