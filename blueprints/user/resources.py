@@ -114,12 +114,36 @@ class UserResource(Resource):
         if userQry is None:
             return {'code': 404, 'message': 'User Not Found'}, 404
 
+        # validation email
         if args['email'] is not None:
-            userQry.email = args['email']
+            dataEmail = args['email'].strip()
+            if isValidEmail(dataEmail) is False:
+                return {'code': 400, 'message': 'Email is not valid'}, 400
+            # check if email has been used
+            emailHasUsed = Users.query.filter_by(email=args['email']).first()
+            if emailHasUsed is not None:
+                return {'code': 400, 'message': 'Email has been used'}, 400
+
+        # validation password
         if args['password'] is not None:
-            userQry.password = args['password']
+            dataPassword = args['password'].strip()
+            if isValidPassword(dataPassword) is False:
+                return {'code': 400, 'message': 'Password is not valid'}, 400
+
+        # validation name
         if args['name'] is not None:
-            userQry.name = args['name']
+            dataName = args['name'].strip()
+            if isValidName(dataName) is False:
+                return {'code': 400, 'message': 'Name is not valid'}, 400
+
+        # if all validation complete, input data to database
+        if args['email'] is not None:
+            userQry.email = dataEmail
+        if args['password'] is not None:    
+            passwordHash = hashlib.md5(dataPassword.encode())
+            userQry.password = passwordHash.hexdigest()
+        if args['name'] is not None:    
+            userQry.name = dataName
         if args['brewCount'] is not None:
             userQry.brewCount = args['brewCount']
         if args['recipeCount'] is not None:
