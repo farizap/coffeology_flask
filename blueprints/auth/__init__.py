@@ -50,6 +50,11 @@ class CreateTokenResources(Resource):
         # Hash inputtted password
         passwordHashed = hashlib.md5(body['password'].encode()).hexdigest()
         userQry = Users.query
+        
+        emailNotRegistered = Users.query.filter_by(email=body['email'].lower()).first()
+        if emailNotRegistered is None:
+            return {'code': 400, 'message': 'Email Belum Terdaftar'}, 400
+
         userQry = userQry.filter_by(email=body['email'].lower())
         userQry = userQry.filter_by(password=passwordHashed).first()
 

@@ -130,8 +130,8 @@ class TestUserCrud():
     def testUserPutValid(self, client):
         # token = create_token_non_internal()
         data = {
-            'email': 'coba@coba.com',
-            'password': 'password1',
+            'email': 'user1@user.com',
+            'password': 'Password1',
             'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
@@ -161,11 +161,86 @@ class TestUserCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
+    def testUserPutInvalidEmailHasBeenUsed(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'user2@user.com',
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.put(f'/users/{TestUserCrud.user_id}',
+                          data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidEmailTooShort(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'c@c.c',
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.put(f'/users/{TestUserCrud.user_id}',
+                          data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongEmailType(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'cccc.cccc',
+            'password': 'Password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.put(f'/users/{TestUserCrud.user_id}',
+                          data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongPassword(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'coba1@coba.com',
+            'password': 'password',
+            'name': 'name',
+            'photo': 'photo'
+        }
+        res = client.put(f'/users/{TestUserCrud.user_id}',
+                          data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongName(self, client):
+        # token = create_token_non_internal()
+        data = {
+            'email': 'coba1@coba.com',
+            'password': 'Password1',
+            'name': 'n4me',
+            'photo': 'photo'
+        }
+        res = client.put(f'/users/{TestUserCrud.user_id}',
+                          data=json.dumps(data),
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
 # user delete by id
 
     def testUserDeleteValid(self, client):
         # token = create_token_non_internal()
-        res = client.delete('/users/1', content_type='application/json')
+        res = client.delete(f'/users/{TestUserCrud.user_id}', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
