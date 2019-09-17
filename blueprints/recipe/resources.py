@@ -209,6 +209,7 @@ class RecipesListResource(Resource):
         parser.add_argument('methods', location='args')
         parser.add_argument('search', location='args')
         parser.add_argument('origins', location='args')
+        parser.add_argument('difficulties', location='args')
         parser.add_argument('sortby', location='args')
 
         data = parser.parse_args()
@@ -232,6 +233,11 @@ class RecipesListResource(Resource):
         if data['origins'] is not None:
             origins = data['origins'].split(',')
             recipeQry = recipeQry.filter(Recipes.originID.in_(origins))
+
+        # filter by difficulties
+        if data['difficulties'] is not None:
+            difficulties = data['difficulties'].split(',')
+            recipeQry = recipeQry.filter(Recipes.difficulty.in_(difficulties))
 
         # to filter by userID or methodID
         if data['userID'] is not None:
