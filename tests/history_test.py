@@ -8,42 +8,6 @@ class TestHistoryCrud():
     resetDatabase()
     historyID = 0
 
-# history get all
-    def testHistoryGetAll(self, client):
-        token = createTokenNonInternal()
-        res = client.get('/history',
-                         headers={'Authorization': 'Bearer ' + token},
-                         content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 200
-
-    def testHistoryGetAllDesc(self, client):
-        token = createTokenNonInternal()
-        data = {
-            "sort": "desc"
-        }
-        res = client.get('/history',
-                         headers={'Authorization': 'Bearer ' + token},
-                         query_string=data,
-                         content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 200
-
-    def testHistoryGetAllAsc(self, client):
-        token = createTokenNonInternal()
-        data = {
-            "sort": "asc"
-        }
-        res = client.get('/history',
-                         headers={'Authorization': 'Bearer ' + token},
-                         query_string=data,
-                         content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 200
-
 # history post
     def testHistoryPostValid(self, client):
         token = createTokenNonInternal()
@@ -79,6 +43,42 @@ class TestHistoryCrud():
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
+
+# history get all
+    def testHistoryGetAll(self, client):
+        token = createTokenNonInternal()
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testHistoryGetAllDesc(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "sort": "desc"
+        }
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
+                         query_string=data,
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testHistoryGetAllAsc(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "sort": "asc"
+        }
+        res = client.get('/history',
+                         headers={'Authorization': 'Bearer ' + token},
+                         query_string=data,
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
 
 # history put
     def testHistoryPutValid(self, client):
