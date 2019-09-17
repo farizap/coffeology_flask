@@ -65,9 +65,11 @@ class ReviewResource(Resource):
 
          # add reviewCount
         recipe = Recipes.query.get(data['recipeID'])
-        recipeReviewCount = marshal(recipe, Recipes.responseFields)['reviewCount']
-        
+        recipeReviewCount = int(marshal(recipe, Recipes.responseFields)['reviewCount'])
+        recipeRating = int(marshal(recipe, Recipes.responseFields)['rating'])
+
         recipe.reviewCount = recipeReviewCount + 1
+        recipe.rating = ((recipeRating*recipeReviewCount) + int(data['rating']))/(recipeReviewCount+ 1)
         db.session.commit()
 
 
