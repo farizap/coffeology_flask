@@ -82,6 +82,10 @@ class UserResource(Resource):
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
 
+        dataBio = data['bio'].strip()
+        if dataBio == "":
+            return {'code': 400, 'message': 'Bio is not valid'}, 400
+
         # password hashing
         passwordHash = hashlib.md5(dataPassword.encode())
 
@@ -103,10 +107,8 @@ class UserResource(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json')
-        parser.add_argument(
-            'password',
-            location='json',
-        )
+        parser.add_argument('passwordOld',location='json')
+        parser.add_argument('passwordNew',location='json')
         parser.add_argument('name', location='json')
         parser.add_argument('brewCount', type=int, location='json')
         parser.add_argument('recipeCount', type=int, location='json')
@@ -119,19 +121,27 @@ class UserResource(Resource):
         if userQry is None:
             return {'code': 404, 'message': 'User Not Found'}, 404
 
+        # check if passwordOld match
+        if args['passwordOld'] is not None:
+            passwordOld = args['passwordOld'].strip()        
+            passwordOldHash = hashlib.md5(passwordOld.encode())
+            if passwordOldHash.hexdigest() != userQry.password:
+                return {'code': 400, 'message': 'Wrong Password'}, 400
+
         # validation email
         if args['email'] is not None:
             dataEmail = args['email'].strip()
+            dataEmail = dataEmail.lower()
             if isValidEmail(dataEmail) is False:
                 return {'code': 400, 'message': 'Email is not valid'}, 400
             # check if email has been used
-            emailHasUsed = Users.query.filter_by(email=args['email']).first()
+            emailHasUsed = Users.query.filter_by(email=dataEmail).first()
             if emailHasUsed is not None:
                 return {'code': 400, 'message': 'Email has been used'}, 400
 
         # validation password
-        if args['password'] is not None:
-            dataPassword = args['password'].strip()
+        if args['passwordNew'] and args['passwordOld'] is not None:
+            dataPassword = args['passwordNew'].strip()
             if isValidPassword(dataPassword) is False:
                 return {'code': 400, 'message': 'Password is not valid'}, 400
 
@@ -141,10 +151,15 @@ class UserResource(Resource):
             if isValidName(dataName) is False:
                 return {'code': 400, 'message': 'Name is not valid'}, 400
 
+        # validation bio
+        dataBio = args['bio'].strip()
+        if dataBio == "":
+            return {'code': 400, 'message': 'Bio is not valid'}, 400
+
         # if all validation complete, input data to database
         if args['email'] is not None:
             userQry.email = dataEmail
-        if args['password'] is not None:
+        if args['passwordNew'] is not None:
             passwordHash = hashlib.md5(dataPassword.encode())
             userQry.password = passwordHash.hexdigest()
         if args['name'] is not None:

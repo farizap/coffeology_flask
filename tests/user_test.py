@@ -147,7 +147,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'user1@user.com',
-            'password': 'Password1',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
@@ -166,7 +167,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'admin@admin.com',
-            'password': 'Password',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
             "bio" : "bio",
             'photo': 'photo'
@@ -183,7 +185,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'c@c.c',
-            'password': 'Password',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
             "bio" : "bio",
             'photo': 'photo'
@@ -200,7 +203,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'cccc.cccc',
-            'password': 'Password',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
             "bio" : "bio",
             'photo': 'photo'
@@ -217,7 +221,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'coba1@coba.com',
-            'password': 'password',
+            'passwordOld': 'Password123',
+            'passwordNew': 'Password1',
             'name': 'name',
             "bio" : "bio",
             'photo': 'photo'
@@ -234,7 +239,8 @@ class TestUserCrud():
         token = createTokenNonInternal()
         data = {
             'email': 'coba1@coba.com',
-            'password': 'Password1',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'n4me',
             "bio" : "bio",
             'photo': 'photo'
