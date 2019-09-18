@@ -31,8 +31,7 @@ class RecipesResource(Resource):
                 recipeID=recipe.id).first()
             steps = Steps.query.filter_by(recipeID=recipe.id).all()
             user = Users.query.get(recipe.userID)
-            # user = Users.query.filter_by(id=recipe.userID).first()
-            return {'check':marshal(user, Users.responseFieldsJwt)},200
+
             # create response data
             resData = {}
             resData['recipe'] = marshal(recipe, Recipes.responseFields)
