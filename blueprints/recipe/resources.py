@@ -188,6 +188,10 @@ class RecipesResource(Resource):
                          dataStep['amount'])
 
             db.session.add(step)
+        
+        # add total recipeCount in data user
+        user = Users.query.get(claims['id'])
+        user.recipeCount += 1
 
         db.session.commit()
 
