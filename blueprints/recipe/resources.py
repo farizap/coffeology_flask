@@ -5,7 +5,7 @@ from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import ast
-
+import math
 bp_recipes = Blueprint('recipes', __name__)
 api = Api(bp_recipes)
 
@@ -13,6 +13,7 @@ api = Api(bp_recipes)
 from blueprints.recipe.model import Recipes
 from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.step.model import Steps
+from blueprints.user.model import Users
 
 
 class RecipesResource(Resource):
@@ -29,12 +30,14 @@ class RecipesResource(Resource):
             recipeDetail = RecipeDetails.query.filter_by(
                 recipeID=recipe.id).first()
             steps = Steps.query.filter_by(recipeID=recipe.id).all()
+            user = Users.query.get(recipe.userID)
 
             # create response data
             resData = {}
             resData['recipe'] = marshal(recipe, Recipes.responseFields)
             resData['recipeDetails'] = marshal(recipeDetail,
                                                RecipeDetails.responseFields)
+            resData['user'] = marshal(user, Users.responseFieldsJwt)
 
             stepList = []
             for step in steps:
@@ -108,7 +111,10 @@ class RecipesResource(Resource):
             try:
                 dataRecipesDict[data] = int(dataRecipesDict[data])
             except Exception as e:
-                return {'code': 400, 'message': f'{data} Resep harus integer'}, 400
+                return {
+                    'code': 400,
+                    'message': f'{data} Resep harus integer'
+                }, 400
 
         # validate input data int for recipeDetails
         for key in dataRecipeDetailsDict:
@@ -182,6 +188,10 @@ class RecipesResource(Resource):
                          dataStep['amount'])
 
             db.session.add(step)
+        
+        # add total recipeCount in data user
+        user = Users.query.get(claims['id'])
+        user.recipeCount += 1
 
         db.session.commit()
 
@@ -198,18 +208,18 @@ class RecipesListResource(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
-        parser.add_argument('rp', type=int, location='args', default=25)
+        parser.add_argument('rp', type=int, location='args', default=10)
         parser.add_argument('userID', type=int, location='args')
         parser.add_argument('methodID', type=int, location='args')
         parser.add_argument('orderby',
                             location='args',
-                            choices=('favoriteCount', 'difficulty'))
+                            choices=('rating', 'difficulty', 'brewCount'))
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
         # Fariz
         parser.add_argument('methods', location='args')
         parser.add_argument('search', location='args')
         parser.add_argument('origins', location='args')
-        parser.add_argument('sortby', location='args')
+        parser.add_argument('difficulties', location='args')
 
         data = parser.parse_args()
 
@@ -221,7 +231,8 @@ class RecipesListResource(Resource):
         # filter by search
         if data['search'] is not None:
             recipeQry = recipeQry.filter(
-                Recipes.name.like('%' + data['search'] + '%'))
+                Recipes.name.like('%' + data['search'] + '%')
+                | Recipes.beanName.like('%' + data['search'] + '%'))
 
         # filter by methods
         if data['methods'] is not None:
@@ -233,6 +244,11 @@ class RecipesListResource(Resource):
             origins = data['origins'].split(',')
             recipeQry = recipeQry.filter(Recipes.originID.in_(origins))
 
+        # filter by difficulties
+        if data['difficulties'] is not None:
+            difficulties = data['difficulties'].split(',')
+            recipeQry = recipeQry.filter(Recipes.difficulty.in_(difficulties))
+
         # to filter by userID or methodID
         if data['userID'] is not None:
             recipeQry = recipeQry.filter_by(userID=data['userID'])
@@ -241,21 +257,33 @@ class RecipesListResource(Resource):
 
         # to handle orderby difficulty or favouriteCount
         if data['orderby'] is not None:
-            if data['orderby'] == 'favoriteCount':
+            if data['orderby'] == 'rating':
                 if data['sort'] == 'desc':
-                    recipeQry = recipeQry.order_by(desc(Recipes.favoriteCount))
+                    recipeQry = recipeQry.order_by(desc(Recipes.rating))
                 else:
-                    recipeQry = recipeQry.order_by((Recipes.favoriteCount))
+                    recipeQry = recipeQry.order_by((Recipes.rating))
             elif data['orderby'] == 'difficulty':
                 if data['sort'] == 'desc':
                     recipeQry = recipeQry.order_by(desc(Recipes.difficulty))
                 else:
                     recipeQry = recipeQry.order_by((Recipes.difficulty))
+            elif data['orderby'] == 'brewCount':
+                if data['sort'] == 'desc':
+                    recipeQry = recipeQry.order_by(desc(Recipes.brewCount))
+                else:
+                    recipeQry = recipeQry.order_by((Recipes.brewCount))
 
         recipes = []
         for recipe in recipeQry.limit(data['rp']).offset(offset).all():
             recipes.append(marshal(recipe, Recipes.responseFields))
-        return {'code': 200, 'message': 'oke', 'data': recipes}, 200
+        pageTotal = math.ceil(recipeQry.count() / data['rp'])
+        return {
+            'code': 200,
+            'message': 'oke',
+            'pageTotal': pageTotal,
+            'pageNow': data['p'],
+            'recipes': recipes
+        }, 200
 
 
 class RecipesUserResource(Resource):
