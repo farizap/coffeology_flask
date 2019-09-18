@@ -4,6 +4,7 @@ from .model import Reviews
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from blueprints.recipe.model import Recipes
+from blueprints.user.model import Users
 
 bp_reviews = Blueprint ('reviews',__name__)
 api = Api(bp_reviews)
@@ -16,8 +17,7 @@ class ReviewResource(Resource):
     def options (self, id=None):
         return {'code': 200, 'message': 'oke'}, 200
 
-    @jwt_required
-    @non_internal_required
+
     def get (self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
@@ -37,7 +37,10 @@ class ReviewResource(Resource):
 
         reviewList = []
         for review in reviews.limit(data['rp']).offset(offset).all():
-            reviewList.append(marshal(review,Reviews.responseFields))
+            reviewDict = marshal(review,Reviews.responseFields)
+            if reviewDict['content'] != "":
+                reviewDict['user'] = marshal(Users.query.get(review.userID),Users.responseFieldsJwt)
+                reviewList.append(reviewDict)
        
         return {'code': 200, 'message': 'oke', 'data': reviewList}, 200
 
@@ -65,9 +68,11 @@ class ReviewResource(Resource):
 
          # add reviewCount
         recipe = Recipes.query.get(data['recipeID'])
-        recipeReviewCount = marshal(recipe, Recipes.responseFields)['reviewCount']
-        
+        recipeReviewCount = int(marshal(recipe, Recipes.responseFields)['reviewCount'])
+        recipeRating = int(marshal(recipe, Recipes.responseFields)['rating'])
+
         recipe.reviewCount = recipeReviewCount + 1
+        recipe.rating = ((recipeRating*recipeReviewCount) + int(data['rating']))/(recipeReviewCount+ 1)
         db.session.commit()
 
 
