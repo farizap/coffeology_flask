@@ -13,6 +13,7 @@ api = Api(bp_recipes)
 from blueprints.recipe.model import Recipes
 from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.step.model import Steps
+from blueprints.user.model import Users
 
 
 class RecipesResource(Resource):
@@ -182,6 +183,10 @@ class RecipesResource(Resource):
                          dataStep['amount'])
 
             db.session.add(step)
+        
+        # add total recipeCount in data user
+        user = Users.query.get(claims['id'])
+        user.recipeCount += 1
 
         db.session.commit()
 
