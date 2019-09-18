@@ -39,7 +39,6 @@ def resetDatabase():
     step = Steps(1, 1, 1, "note", 1, 1)
     recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
                                  92)
-    history = History(1, 1)
 
     # save users to database
     db.session.add(method)
@@ -50,7 +49,6 @@ def resetDatabase():
     db.session.add(admin)
     admin.role = 1
     db.session.add(step)
-    db.session.add(history)
     db.session.commit()
 
 
