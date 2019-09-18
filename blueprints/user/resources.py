@@ -143,7 +143,7 @@ class UserResource(Resource):
         if args['passwordNew'] and args['passwordOld'] is not None:
             dataPassword = args['passwordNew'].strip()
             if isValidPassword(dataPassword) is False:
-                return {'code': 400, 'message': 'Password is not valid'}, 400
+                return {'code': 400, 'message': 'New Password is not valid'}, 400
 
         # validation name
         if args['name'] is not None:
@@ -152,9 +152,10 @@ class UserResource(Resource):
                 return {'code': 400, 'message': 'Name is not valid'}, 400
 
         # validation bio
-        dataBio = args['bio'].strip()
-        if dataBio == "":
-            return {'code': 400, 'message': 'Bio is not valid'}, 400
+        if args['bio'] is not None:
+            dataBio = args['bio'].strip()
+            if dataBio == "":
+                return {'code': 400, 'message': 'Bio is not valid'}, 400
 
         # if all validation complete, input data to database
         if args['email'] is not None:
@@ -171,7 +172,7 @@ class UserResource(Resource):
         if args['photo'] is not None:
             userQry.photo = args['photo']
         if args['bio'] is not None:
-            userQry.bio = args['bio']
+            userQry.bio = dataBio
 
         db.session.commit()
         return {
