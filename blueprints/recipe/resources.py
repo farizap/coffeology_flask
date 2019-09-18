@@ -39,7 +39,6 @@ class RecipesResource(Resource):
                                                RecipeDetails.responseFields)
             resData['user'] = marshal(user, Users.responseFieldsJwt)
 
-
             stepList = []
             for step in steps:
                 stepList.append(marshal(step, Steps.responseFields))
@@ -228,7 +227,8 @@ class RecipesListResource(Resource):
         # filter by search
         if data['search'] is not None:
             recipeQry = recipeQry.filter(
-                Recipes.name.like('%' + data['search'] + '%'))
+                Recipes.name.like('%' + data['search'] + '%')
+                | Recipes.beanName.like('%' + data['search'] + '%'))
 
         # filter by methods
         if data['methods'] is not None:
