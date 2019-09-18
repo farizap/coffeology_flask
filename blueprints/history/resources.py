@@ -70,6 +70,7 @@ class HistoryResource(Resource):
         history = History(claims['id'], data['recipeID'])
 
         db.session.add(history)
+        
         db.session.commit()
 
         app.logger.debug('DEBUG : %s', history)

@@ -33,13 +33,12 @@ def resetDatabase():
     method = Methods("name", "icon", 1)
     recipe = Recipes(1, "name", 1, 1, "beanName", "beanProcess",
                      "beanRoasting", 1, 1, 1, 1)
-    user = Users("user@user.com", passwordHashed, "name", "photo")
-    user2 = Users("user2@user.com", passwordHashed, "name", "photo")
-    admin = Users("admin@admin.com", passwordHashed, "name", "photo")
+    user = Users("user@user.com", passwordHashed, "name", "photo", "bio")
+    user2 = Users("user2@user.com", passwordHashed, "name", "photo", "bio")
+    admin = Users("admin@admin.com", passwordHashed, "name", "photo", "bio")
     step = Steps(1, 1, 1, "note", 1, 1)
     recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
                                  92)
-    history = History(1, 1)
 
     # save users to database
     db.session.add(method)
@@ -50,7 +49,6 @@ def resetDatabase():
     db.session.add(admin)
     admin.role = 1
     db.session.add(step)
-    db.session.add(history)
     db.session.commit()
 
 

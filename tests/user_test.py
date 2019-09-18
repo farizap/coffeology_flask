@@ -26,11 +26,21 @@ class TestUserCrud():
 # user get all
 
     def testUserGetAllValid(self, client):
-        # token = create_token_non_internal()
-        res = client.get('/users', content_type='application/json')
+        token = createTokenInternal()
+        res = client.get('/users/admin', headers={'Authorization': 'Bearer ' + token},  content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
+
+# user get by token
+
+    def testUserGetByTokenValid(self, client):
+        token = createTokenNonInternal()
+        res = client.get('/users/me', headers={'Authorization': 'Bearer ' + token}, content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
 
 # user post
 
@@ -40,7 +50,8 @@ class TestUserCrud():
             'email': 'coba@coba.com',
             'password': 'Password1',
             'name': 'name',
-            'photo': 'photo1'
+            'photo': 'photo1',
+            "bio" : "bio"
         }
         res = client.post('/users',
                           data=json.dumps(data),
@@ -56,6 +67,7 @@ class TestUserCrud():
             'email': 'coba@coba.com',
             'password': 'Password',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -71,6 +83,7 @@ class TestUserCrud():
             'email': 'c@c.c',
             'password': 'Password',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -86,6 +99,7 @@ class TestUserCrud():
             'email': 'cccc.cccc',
             'password': 'Password',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -101,6 +115,7 @@ class TestUserCrud():
             'email': 'coba1@coba.com',
             'password': 'password',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -116,6 +131,7 @@ class TestUserCrud():
             'email': 'coba1@coba.com',
             'password': 'Password1',
             'name': 'n4me',
+            "bio" : "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -128,109 +144,146 @@ class TestUserCrud():
 # user put
 
     def testUserPutValid(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             'email': 'user1@user.com',
-            'password': 'Password1',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
+            "bio" : "bio",
             'photo': 'photo1'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-    def testUserPutInvalidID(self, client):
-        # token = create_token_non_internal()
-        data = {
-            'email': 'coba@coba.com',
-            'password': 'password1',
-            'name': 'name',
-            'brewCount': 1,
-            'recipeCount': 1,
-            'photo': 'photo1'
-        }
-        res = client.put('/users/-1',
-                         data=json.dumps(data),
-                         content_type='application/json')
-
-        res_json = json.loads(res.data)
-        assert res.status_code == 404
-
     def testUserPutInvalidEmailHasBeenUsed(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
-            'email': 'user2@user.com',
-            'password': 'Password',
+            'email': 'admin@admin.com',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                           data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testUserPutInvalidEmailTooShort(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             'email': 'c@c.c',
-            'password': 'Password',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                           data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testUserPutInvalidWrongEmailType(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             'email': 'cccc.cccc',
-            'password': 'Password',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                           data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testUserPutInvalidWrongPassword(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             'email': 'coba1@coba.com',
-            'password': 'password',
+            'passwordOld': 'Password123',
+            'passwordNew': 'Password1',
             'name': 'name',
+            "bio" : "bio",
             'photo': 'photo'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                           data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongNewPasswordType(self, client):
+        token = createTokenNonInternal()
+        data = {
+            'email': 'coba1@coba.com',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password',
+            'name': 'name',
+            "bio" : "bio",
+            'photo': 'photo'
+        }
+        res = client.put('/users',
+                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongBio(self, client):
+        token = createTokenNonInternal()
+        data = {
+            'email': 'coba1@coba.com',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
+            'name': 'name',
+            "bio" : "       ",
+            'photo': 'photo'
+        }
+        res = client.put('/users',
+                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
     def testUserPutInvalidWrongName(self, client):
-        # token = create_token_non_internal()
+        token = createTokenNonInternal()
         data = {
             'email': 'coba1@coba.com',
-            'password': 'Password1',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
             'name': 'n4me',
+            "bio" : "bio",
             'photo': 'photo'
         }
-        res = client.put(f'/users/{TestUserCrud.user_id}',
+        res = client.put('/users',
                           data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -265,6 +318,20 @@ class TestUserCrud():
     def testUserOptionsValid(self, client):
         # token = create_token_non_internal()
         res = client.options('/users', content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testUserMeOptionsValid(self, client):
+        res = client.options('/users/me',
+         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testUserAdminOptionsValid(self, client):
+        res = client.options('/users/admin',
+         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200

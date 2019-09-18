@@ -14,7 +14,6 @@ class Recipes(db.Model):
     beanProcess = db.Column(db.String(30), nullable=False)
     beanRoasting = db.Column(db.String(30), nullable=False)
     rating = db.Column(db.Float, nullable=False, default=0)
-    favoriteCount = db.Column(db.Integer, nullable=False, default=0)
     reviewCount = db.Column(db.Integer, nullable=False, default=0)
     brewCount = db.Column(db.Integer, nullable=False, default=0)
     difficulty = db.Column(db.Integer, nullable=False)
@@ -33,7 +32,6 @@ class Recipes(db.Model):
         'beanProcess': fields.String,
         'beanRoasting': fields.String,
         'rating': fields.Float,
-        'favoriteCount': fields.Integer,
         'reviewCount': fields.Integer,
         'brewCount': fields.Integer,
         'difficulty': fields.Integer,
