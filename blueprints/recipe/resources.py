@@ -13,6 +13,7 @@ api = Api(bp_recipes)
 from blueprints.recipe.model import Recipes
 from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.step.model import Steps
+from blueprints.user.model import Users
 
 
 class RecipesResource(Resource):
@@ -29,12 +30,15 @@ class RecipesResource(Resource):
             recipeDetail = RecipeDetails.query.filter_by(
                 recipeID=recipe.id).first()
             steps = Steps.query.filter_by(recipeID=recipe.id).all()
+            user = Users.query.get(recipe.userID)
 
             # create response data
             resData = {}
             resData['recipe'] = marshal(recipe, Recipes.responseFields)
             resData['recipeDetails'] = marshal(recipeDetail,
                                                RecipeDetails.responseFields)
+            resData['user'] = marshal(user, Users.responseFieldsJwt)
+
 
             stepList = []
             for step in steps:
