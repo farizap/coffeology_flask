@@ -38,8 +38,12 @@ class TestRecipeCrud():
         data = {
             'userID': 1,
             'methodID': 1,
-            'orderby': 'favoriteCount',
-            'sort': 'asc'
+            'orderby': 'difficulty',
+            'sort': 'asc',
+            'search': 'name',
+            'methods' : 1,
+            'origins' : 1,
+            'difficulties' : 1
         }
         res = client.get('/recipes', query_string=data,
                          content_type='application/json')
@@ -51,8 +55,21 @@ class TestRecipeCrud():
         data = {
             'userID': 1,
             'methodID': 1,
-            'orderby': 'favoriteCount',
+            'orderby': 'rating',
             'sort': 'desc'
+        }
+        res = client.get('/recipes', query_string=data,
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testRecipeGetAllValidUsingParams_2_1(self, client):
+        data = {
+            'userID': 1,
+            'methodID': 1,
+            'orderby': 'rating',
+            'sort': 'asc'
         }
         res = client.get('/recipes', query_string=data,
                          content_type='application/json')
@@ -74,6 +91,28 @@ class TestRecipeCrud():
     def testRecipeGetAllValidUsingParams_4(self, client):
         data = {
             'orderby': 'difficulty',
+            'sort': 'desc'
+        }
+        res = client.get('/recipes', query_string=data,
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testRecipeGetAllValidUsingParams_5(self, client):
+        data = {
+            'orderby': 'brewCount',
+            'sort': 'asc'
+        }
+        res = client.get('/recipes', query_string=data,
+                         content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testRecipeGetAllValidUsingParams_6(self, client):
+        data = {
+            'orderby': 'brewCount',
             'sort': 'desc'
         }
         res = client.get('/recipes', query_string=data,
