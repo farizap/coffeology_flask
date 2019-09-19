@@ -6,6 +6,7 @@ from . import createTokenInternal, resetDatabase
 class TestRecipeCrud():
 
     resetDatabase()
+    recipeID = 0
 
 # recipe get by id
     def testRecipeGetByIDValid(self, client):
@@ -703,6 +704,654 @@ class TestRecipeCrud():
             ]
         }
         res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+# recipe put
+
+    def testRecipePutValid(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 0.4,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testRecipePutInvalidRecipeID(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 0.4,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/2', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataRecipe(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": " ",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataRecipeDetail(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": " ",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataStep(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "  ",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/2', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataStepEmpty(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": []
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataRecipeNotInteger(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": "methodID",
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataRecipeDetailNotInteger(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": "aroma",
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataStepNotInteger(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": "methodID",
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 1,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": "stepNumber",
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidWaterTemp(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 0.4,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": "salah"
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testRecipePutInvalidDataStepNotIntegerAmount(self, client):
+        token = createTokenNonInternal()
+        data = {
+            "recipes": {
+                "name": "name",
+                "methodID": 1,
+                "originID": 1,
+                "beanName": "beanName",
+                "beanProcess": "beanProcess",
+                "beanRoasting": "beanRoasting",
+                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+            },
+            "recipeDetails": {
+                "recipeID": 1,
+                "fragrance": 0.4,
+                "aroma": 1,
+                "cleanliness": 1,
+                "sweetness": 1,
+                "taste": 1,
+                "acidity": 1,
+                "aftertaste": 1,
+                "balance": 1,
+                "globalTaste": 1,
+                "body": 1,
+                "note": "note",
+                "grindSize": 2,
+                "waterTemp": 93
+            },
+            "steps": [
+                {
+                    "recipeID": 1,
+                    "stepNumber": 1,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": 1
+                },
+                {
+                    "recipeID": 1,
+                    "stepNumber": 2,
+                    "stepTypeID": 1,
+                    "note": "note",
+                    "time": 1,
+                    "amount": "salah"
+                }
+            ]
+        }
+        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
