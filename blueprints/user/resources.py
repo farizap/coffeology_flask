@@ -61,8 +61,8 @@ class UserResource(Resource):
         parser.add_argument('email', location='json', required=True)
         parser.add_argument('password', location='json', required=True)
         parser.add_argument('name', location='json', required=True)
-        parser.add_argument('photo', location='json', required=True)
-        parser.add_argument('bio', location='json', required=True)
+        parser.add_argument('photo', location='json', default="")
+        parser.add_argument('bio', location='json', default="")
         data = parser.parse_args()
 
         dataEmail = data['email'].strip()
@@ -82,9 +82,9 @@ class UserResource(Resource):
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
 
-        dataBio = data['bio'].strip()
-        if dataBio == "":
-            return {'code': 400, 'message': 'Bio is not valid'}, 400
+        # dataBio = data['bio'].strip()
+        # if dataBio == "":
+        #     return {'code': 400, 'message': 'Bio is not valid'}, 400
 
         # password hashing
         passwordHash = hashlib.md5(dataPassword.encode())

@@ -41,7 +41,7 @@ class TestAuthCrud():
 
 
 # auth not valid
-    def testAuthPostInvalid(self, client):
+    def testAuthPostInvalidEmailNotRegistered(self, client):
         data = {
             'email': 'user2@user9.com',
             'password': 'Password1'
@@ -53,7 +53,7 @@ class TestAuthCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
-    def testAuthPostInvalid(self, client):
+    def testAuthPostInvalidWrongPassword(self, client):
         data = {
             'email': 'user2@user.com',
             'password': 'passWord1'

@@ -235,6 +235,42 @@ class TestUserCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
+    def testUserPutInvalidWrongNewPasswordType(self, client):
+        token = createTokenNonInternal()
+        data = {
+            'email': 'coba1@coba.com',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password',
+            'name': 'name',
+            "bio" : "bio",
+            'photo': 'photo'
+        }
+        res = client.put('/users',
+                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
+    def testUserPutInvalidWrongBio(self, client):
+        token = createTokenNonInternal()
+        data = {
+            'email': 'coba1@coba.com',
+            'passwordOld': 'Password1',
+            'passwordNew': 'Password1',
+            'name': 'name',
+            "bio" : "       ",
+            'photo': 'photo'
+        }
+        res = client.put('/users',
+                          data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                          content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 400
+
     def testUserPutInvalidWrongName(self, client):
         token = createTokenNonInternal()
         data = {

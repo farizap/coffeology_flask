@@ -100,6 +100,7 @@ from blueprints.step.resources import bp_steps
 from blueprints.review.resources import bp_reviews
 from blueprints.auth import bp_auth
 from blueprints.history.resources import bp_history
+from blueprints.bean.resources import bp_beans
 
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(bp_auth, url_prefix='/token')
@@ -109,5 +110,6 @@ app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
 app.register_blueprint(bp_steps, url_prefix='/steps')
 app.register_blueprint(bp_reviews, url_prefix='/reviews')
 app.register_blueprint(bp_history, url_prefix='/history')
+app.register_blueprint(bp_beans, url_prefix='/beans')
 
 db.create_all()
