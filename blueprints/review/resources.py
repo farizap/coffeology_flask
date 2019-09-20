@@ -5,6 +5,7 @@ from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from blueprints.recipe.model import Recipes
 from blueprints.user.model import Users
+import math
 
 bp_reviews = Blueprint ('reviews',__name__)
 api = Api(bp_reviews)
@@ -41,8 +42,10 @@ class ReviewResource(Resource):
             if reviewDict['content'] != "":
                 reviewDict['user'] = marshal(Users.query.get(review.userID),Users.responseFieldsJwt)
                 reviewList.append(reviewDict)
-       
-        return {'code': 200, 'message': 'oke', 'data': reviewList}, 200
+
+        pageTotal = math.ceil(reviews.count() / data['rp'])
+
+        return {'code': 200, 'message': 'oke', 'pageTotal': pageTotal, 'pageNow': data['p'], 'data': reviewList}, 200
 
     @jwt_required
     @non_internal_required

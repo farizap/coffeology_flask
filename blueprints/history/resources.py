@@ -7,6 +7,7 @@ from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import ast
+import math
 
 bp_history = Blueprint('history', __name__)
 api = Api(bp_history)
@@ -26,7 +27,7 @@ class HistoryListResource(Resource):
         claims = get_jwt_claims()
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
-        parser.add_argument('rp', type=int, location='args', default=25)
+        parser.add_argument('rp', type=int, location='args', default=10)
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
         data = parser.parse_args()
 
@@ -49,7 +50,10 @@ class HistoryListResource(Resource):
             recipe = recipes.get(recipeID)
             recipe.createdAt = history.createdAt
             historyList.append(marshal(recipe, Recipes.responseFields))
-        return {'code': 200, 'message': 'oke', 'data': historyList}, 200
+
+        pageTotal = math.ceil(histories.count() / data['rp'])
+
+        return {'code': 200, 'message': 'oke', 'pageTotal': pageTotal ,'pageNow': data['p'], 'data': historyList}, 200
 
 class HistoryResource(Resource):
 

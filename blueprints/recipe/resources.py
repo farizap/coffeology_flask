@@ -292,13 +292,25 @@ class RecipesUserResource(Resource):
     @jwt_required
     @non_internal_required
     def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('p', type=int, location='args', default=1)
+        parser.add_argument('rp', type=int, location='args', default=10)
+        data = parser.parse_args()
+
         claims = get_jwt_claims()
+
         recipes = Recipes.query.filter_by(userID=claims['id'])
 
+        offset = (data['p'] * data['rp']) - data['rp']
+
+
         recipeList = []
-        for recipe in recipes.all():
+        for recipe in recipes.limit(data['rp']).offset(offset).all():
             recipeList.append(marshal(recipe, Recipes.responseFields))
-        return {'code': 200, 'message': 'oke', 'data': recipeList}, 200
+
+        pageTotal = math.ceil(recipes.count() / data['rp'])
+
+        return {'code': 200, 'message': 'oke', 'pageTotal': pageTotal ,'pageNow': data['p'], 'data': recipeList}, 200
 
 
 api.add_resource(RecipesListResource, '')
