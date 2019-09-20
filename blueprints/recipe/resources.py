@@ -14,6 +14,8 @@ from blueprints.recipe.model import Recipes
 from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.step.model import Steps
 from blueprints.user.model import Users
+from blueprints.history.model import History
+from blueprints.review.model import Reviews
 
 
 class RecipesResource(Resource):
@@ -352,8 +354,49 @@ class RecipesResource(Resource):
             db.session.add(step)
 
         db.session.commit()
-
         return {'code': 200, 'message': 'edited'}, 200
+
+    @jwt_required
+    @non_internal_required
+    def delete(self, id):
+        claims = get_jwt_claims()
+        recipe = Recipes.query.get(id)
+        if recipe is None:
+            return {'code': 404, 'status': 'Recipe Not Found'}, 404
+
+        if recipe.userID != claims['id']:
+            return {'code': 404, 'status': 'Anda Tidak Dapat Menghapus Resep Ini'}, 404
+
+        db.session.delete(recipe)
+
+        # to remove total recipe in table user
+        user = Users.query.get(claims['id'])
+        user.recipeCount -= 1
+
+        # delete recipe details
+        recipeDetails = RecipeDetails.query.filter_by(recipeID=id).all()
+        for recipeDetail in recipeDetails:
+            db.session.delete(recipeDetail)
+
+        # delete step
+        steps = Steps.query.filter_by(recipeID=id).all()
+        for step in steps:
+            db.session.delete(step)
+        
+        # delete review
+        reviews = Reviews.query.filter_by(recipeID=id).all()
+        for review in reviews:
+            db.session.delete(review)
+
+        #delete history and brewCount in table user
+        histories = History.query.filter_by(recipeID=id).all()
+        for history in histories:
+            user = Users.query.get(history.userID)
+            user.brewCount -= 1
+            db.session.delete(history)
+
+        db.session.commit()
+        return {'code': 200, 'message': 'Recipe Deleted'}, 200
 
 class RecipesListResource(Resource):
     def __init__(self):
