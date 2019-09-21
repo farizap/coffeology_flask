@@ -12,7 +12,7 @@ api = Api(bp_users)
 
 
 def isValidEmail(email):
-    # to validate email
+    """Validate email using reGex"""
     pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
     if len(email) > 7:
         if re.match(pattern, email) is not None:
@@ -23,7 +23,7 @@ def isValidEmail(email):
 
 
 def isValidPassword(password):
-    # to validate password, at least one capital and one number
+    """to validate password, at least one capital and one number with minimum 6 character long """
     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
         return True
     else:
@@ -31,7 +31,7 @@ def isValidPassword(password):
 
 
 def isValidName(name):
-    # to validate name just alphabet      
+    """to validate name just alphabet"""
     if re.match(r"^[A-Za-z\s]+$", name):
         return True
     return False
@@ -45,6 +45,34 @@ class UserResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
+        """Get user information by user id
+        :param id: the id of user
+        :type id: int, required
+        :>json dict data: consist of data user
+        :status 200: user found and data return as response
+        :status 404: user not found
+        
+        **Example response**:
+
+        .. sourcecode:: http
+
+          
+          {
+              "code": 200,
+              "message": "oke",
+              "data": {
+                  "id": 1,
+                  "email": "user2@user.com",
+                  "name": "name",
+                  "brewCount": 0,
+                  "recipeCount": 0,
+                  "photo": "photo",
+                  "status": 1,
+                  "role": 0,
+                  "bio": "bio"
+              }
+          }
+        """
         userQry = Users.query.get(id)
         if userQry is not None:
             return {
@@ -55,7 +83,15 @@ class UserResource(Resource):
         return {'code': 404, 'message': 'User Not Found'}, 404
 
     def post(self):
-        '''User register new account'''
+        '''User register new account
+
+        :<json string email: email user inputted from register form
+        :<json string password: password user inputted from register form
+        :<json string name: name user inputted from register form
+        :<json string photo: url photo of user
+        :<json string bio: bio of user
+        :status 201: user created
+        '''
 
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json', required=True)
@@ -105,10 +141,25 @@ class UserResource(Resource):
     @jwt_required
     @non_internal_required
     def put(self):
+        '''User edit account info
+
+        :<json string email: email user 
+        :<json string passwordOld: old password user inputted from change password form
+        :<json string passwordNew: new password user inputted from change password form
+        :<json string name: name user inputted in edit profile form
+        :<json string photo: url photo of user
+        :<json string bio: bio of user inputted in edit profile form
+        :<json string brewCount: count how many times user use recipes
+        :<json string recipeCount: quantity of recipes user has created
+        :status 404: user not found
+        :status 400: invalid input
+        :status 200: success edit user
+        '''
+
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json')
-        parser.add_argument('passwordOld',location='json')
-        parser.add_argument('passwordNew',location='json')
+        parser.add_argument('passwordOld', location='json')
+        parser.add_argument('passwordNew', location='json')
         parser.add_argument('name', location='json')
         parser.add_argument('brewCount', type=int, location='json')
         parser.add_argument('recipeCount', type=int, location='json')
@@ -123,7 +174,7 @@ class UserResource(Resource):
 
         # check if passwordOld match
         if args['passwordOld'] is not None:
-            passwordOld = args['passwordOld'].strip()        
+            passwordOld = args['passwordOld'].strip()
             passwordOldHash = hashlib.md5(passwordOld.encode())
             if passwordOldHash.hexdigest() != userQry.password:
                 return {'code': 400, 'message': 'Wrong Password'}, 400
@@ -143,7 +194,10 @@ class UserResource(Resource):
         if args['passwordNew'] and args['passwordOld'] is not None:
             dataPassword = args['passwordNew'].strip()
             if isValidPassword(dataPassword) is False:
-                return {'code': 400, 'message': 'New Password is not valid'}, 400
+                return {
+                    'code': 400,
+                    'message': 'New Password is not valid'
+                }, 400
 
         # validation name
         if args['name'] is not None:
@@ -202,14 +256,38 @@ class UserMeResource(Resource):
     @jwt_required
     @non_internal_required
     def get(self):
+        """Get user information from token
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+          
+          {
+              "code": 200,
+              "message": "oke",
+              "data": {
+                  "id": 1,
+                  "email": "user2@user.com",
+                  "name": "name",
+                  "brewCount": 0,
+                  "recipeCount": 0,
+                  "photo": "photo",
+                  "status": 1,
+                  "role": 0,
+                  "bio": "bio"
+              }
+          }
+        """
         claims = get_jwt_claims()
         user = Users.query.get(claims['id'])
 
         return {
             'code': 200,
             'message': 'oke',
-            'data': marshal(user, Users.responseFieldsJwt)}, 200
-            
+            'data': marshal(user, Users.responseFieldsJwt)
+        }, 200
+
 
 class UserListAdminResource(Resource):
     def __init__(self):
@@ -221,20 +299,28 @@ class UserListAdminResource(Resource):
     @jwt_required
     @internal_required
     def get(self):
-        parser=reqparse.RequestParser()
+        '''Get list of users, admin required
+
+        :param p: Page number
+        :type p: int, optional
+        :param rp: Number of entries per page
+        :type rp: int, optional
+        '''
+        parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
         parser.add_argument('rp', type=int, location='args', default=25)
-        data=parser.parse_args()
+        data = parser.parse_args()
 
-        offset=(data['p'] * data['rp']) - data['rp']
+        offset = (data['p'] * data['rp']) - data['rp']
 
-        userQry=Users.query
+        userQry = Users.query
 
-        users=[]
+        users = []
         for user in userQry.limit(data['rp']).offset(offset).all():
             users.append(marshal(user, Users.responseFieldsJwt))
 
         return {'code': 200, 'message': 'oke', 'data': users}, 200
+
 
 api.add_resource(UserListAdminResource, '/admin')
 api.add_resource(UserResource, '', '/<id>')
