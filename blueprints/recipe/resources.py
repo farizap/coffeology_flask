@@ -33,6 +33,64 @@ class RecipesResource(Resource):
         :query details: If it is passed, data recipe returned
         :status 200: Recipe is found and data returned returned
         :status 404: No recipe was found with this id
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+          {
+              "code": 200,
+              "message": "oke",
+              "data": {
+                  "recipe": {
+                      "id": 3,
+                      "userID": 4,
+                      "methodID": 1,
+                      "originID": 3,
+                      "name": "french press 14",
+                      "beanName": "origin 3",
+                      "beanProcess": "difficulty 2",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 0,
+                      "difficulty": 2,
+                      "createdAt": "Sat, 21 Sep 2019 18:39:38 -0000",
+                      "time": 20,
+                      "coffeeWeight": 16,
+                      "water": 200
+                  },
+                  "recipeDetails": {
+                      "id": 0,
+                      "recipeID": 0,
+                      "fragrance": null,
+                      "aroma": null,
+                      "cleanliness": null,
+                      "sweetness": null,
+                      "taste": null,
+                      "acidity": null,
+                      "aftertaste": null,
+                      "balance": null,
+                      "globalTaste": null,
+                      "body": null,
+                      "note": null,
+                      "grindSize": 0,
+                      "waterTemp": 0
+                  },
+                  "user": {
+                      "id": 4,
+                      "email": "fapriyanto@alterra.id",
+                      "name": "zxc",
+                      "brewCount": 1,
+                      "recipeCount": 0,
+                      "photo": "",
+                      "status": 1,
+                      "role": 0,
+                      "bio": ""
+                  },
+                  "recipeSteps": []
+              }
+          }
         """
         recipe = Recipes.query.get(id)
 
@@ -208,7 +266,7 @@ class RecipesResource(Resource):
                          dataStep['amount'])
 
             db.session.add(step)
-        
+
         # add total recipeCount in data user
         user = Users.query.get(claims['id'])
         user.recipeCount += 1
@@ -220,6 +278,18 @@ class RecipesResource(Resource):
     @jwt_required
     @non_internal_required
     def put(self, id):
+        """Edit recipes
+
+        :param id: The id of the wanted recipes
+        :type id: int, required
+        :<json object recipes: recipe general info
+        :<json object recipeDetails: recipe detail info
+        :<json array steps: list of steps in the recipe
+        :status 200: editted
+        :status 400: No recipe was found with id in param
+        :status 403: forbidden, token doesn't match userID in recipe
+        """
+
         parser = reqparse.RequestParser()
         parser.add_argument('recipes', location='json')
         parser.add_argument('recipeDetails', location='json')
@@ -327,9 +397,9 @@ class RecipesResource(Resource):
         # validate userID in recipe
         if claims['id'] != recipe.userID:
             return {
-                    'code': 400,
-                    'message': "Anda Tidak Dapat Mengedit Resep Ini"
-            }, 400
+                'code': 403,
+                'message': "Anda Tidak Dapat Mengedit Resep Ini"
+            }, 403
 
         # edit data recipe
         recipe.name = dataRecipesDict['name']
@@ -383,7 +453,10 @@ class RecipesResource(Resource):
             return {'code': 404, 'status': 'Recipe Not Found'}, 404
 
         if recipe.userID != claims['id']:
-            return {'code': 404, 'status': 'Anda Tidak Dapat Menghapus Resep Ini'}, 404
+            return {
+                'code': 404,
+                'status': 'Anda Tidak Dapat Menghapus Resep Ini'
+            }, 404
 
         db.session.delete(recipe)
 
@@ -400,7 +473,7 @@ class RecipesResource(Resource):
         steps = Steps.query.filter_by(recipeID=id).all()
         for step in steps:
             db.session.delete(step)
-        
+
         # delete review
         reviews = Reviews.query.filter_by(recipeID=id).all()
         for review in reviews:
@@ -415,6 +488,7 @@ class RecipesResource(Resource):
 
         db.session.commit()
         return {'code': 200, 'message': 'Recipe Deleted'}, 200
+
 
 class RecipesListResource(Resource):
     def __init__(self):

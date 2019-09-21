@@ -39,6 +39,40 @@ class HistoryListResource(Resource):
         :>json int pageTotal: Total page from query
         :>json array histories: contain recipes that users has used
         :status 200: success get recipes
+
+        
+        **Example response**:
+
+        .. sourcecode:: http
+
+          Host: api.coffeology.shop
+          Accept: application/json
+          {
+              "code": 200,
+              "message": "oke",
+              "pageTotal": 1,
+              "pageNow": 1,
+              "data": [
+                  {
+                      "id": 2,
+                      "userID": 2,
+                      "methodID": 1,
+                      "originID": 1,
+                      "name": "name",
+                      "beanName": "beanName",
+                      "beanProcess": "beanProcess",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 1,
+                      "difficulty": 1,
+                      "createdAt": "Sat, 21 Sep 2019 18:41:35 -0000",
+                      "time": 1,
+                      "coffeeWeight": 1,
+                      "water": 1
+                  }
+              ]
+          }
         """
         claims = get_jwt_claims()
         parser = reqparse.RequestParser()
@@ -108,7 +142,6 @@ class HistoryResource(Resource):
 
         db.session.commit()
 
-
         # add brewCount in reipe table
         recipe = Recipes.query.get(data['recipeID'])
         recipe.brewCount += 1
@@ -117,11 +150,10 @@ class HistoryResource(Resource):
         user = Users.query.get(claims['id'])
         user.brewCount += 1
 
-
         db.session.commit()
 
         app.logger.debug('DEBUG : %s', history)
-        
+
         return {
             'code': 201,
             'message': 'oke',
@@ -139,6 +171,7 @@ class HistoryResource(Resource):
         :>json dict history: history
         :status 200: success edit data
         :status 204: history not found
+
         """
         parser = reqparse.RequestParser()
         parser.add_argument('userID', location='json', required=True)
