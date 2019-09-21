@@ -7,7 +7,7 @@ class Beans(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     originID = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(30), nullable=False)
-    photo = db.Column(db.String(250), nullable=False)
+    photo = db.Column(db.String(250), nullable=True, default="")
     fragrance = db.Column(db.Float, nullable=False)
     flavor = db.Column(db.Float, nullable=False)
     aftertaste = db.Column(db.Float, nullable=False)
@@ -18,11 +18,11 @@ class Beans(db.Model):
     cleanCups = db.Column(db.Float, nullable=False)
     sweetness = db.Column(db.Float, nullable=False)
     overall = db.Column(db.Float, nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    cupping = db.Column(db.String(30), nullable=False)
-    advantage = db.Column(db.String(30), nullable=False)
-    disadvantage = db.Column(db.String(30), nullable=False)
-    location = db.Column(db.String(30), nullable=False)
+    description = db.Column(db.Text, nullable=True,default="")
+    cupping = db.Column(db.String(250), nullable=True,default="")
+    advantage = db.Column(db.String(30), nullable=True,default="")
+    disadvantage = db.Column(db.String(30), nullable=True,default="")
+    location = db.Column(db.String(30), nullable=True,default="")
 
     responseFields = {
         'id': fields.Integer,

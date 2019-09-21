@@ -8,13 +8,13 @@ from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import ast
+import math
 
 bp_history = Blueprint('history', __name__)
 api = Api(bp_history)
 
 
 class HistoryListResource(Resource):
-
     def __init__(self):
         pass
 
@@ -24,10 +24,26 @@ class HistoryListResource(Resource):
     @jwt_required
     @non_internal_required
     def get(self):
+        """
+        Get history by userID from token
+
+        :param userID: the id of user
+        :type userID: int, required
+        :param p: Page number
+        :type p: int, optional
+        :param rp: Number of entries per page
+        :type rp: int, optional
+        :param sort: sort query ascending or descending
+        :type sort: string, optional
+        :>json int pageNow: Page Now 
+        :>json int pageTotal: Total page from query
+        :>json array histories: contain recipes that users has used
+        :status 200: success get recipes
+        """
         claims = get_jwt_claims()
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
-        parser.add_argument('rp', type=int, location='args', default=25)
+        parser.add_argument('rp', type=int, location='args', default=10)
         parser.add_argument('sort', location='args', choices=('asc', 'desc'))
         data = parser.parse_args()
 
@@ -50,10 +66,19 @@ class HistoryListResource(Resource):
             recipe = recipes.get(recipeID)
             recipe.createdAt = history.createdAt
             historyList.append(marshal(recipe, Recipes.responseFields))
-        return {'code': 200, 'message': 'oke', 'data': historyList}, 200
+
+        pageTotal = math.ceil(histories.count() / data['rp'])
+
+        return {
+            'code': 200,
+            'message': 'oke',
+            'pageTotal': pageTotal,
+            'pageNow': data['p'],
+            'data': historyList
+        }, 200
+
 
 class HistoryResource(Resource):
-
     def __init__(self):
         pass
 
@@ -63,6 +88,15 @@ class HistoryResource(Resource):
     @jwt_required
     @non_internal_required
     def post(self):
+        """
+        Post new history when user finished tutorial
+
+        :param userID: from token
+        :type userID: int, required
+        :<json int recipeID: id from recipe user just used 
+        :>json dict history: history response field: id, recipeID, userID, createdAt
+        :status 201: success create data
+        """
         claims = get_jwt_claims()
         parser = reqparse.RequestParser()
         parser.add_argument('recipeID', location='json', required=True)
@@ -71,7 +105,7 @@ class HistoryResource(Resource):
         history = History(claims['id'], data['recipeID'])
 
         db.session.add(history)
-        
+
         db.session.commit()
 
 
@@ -82,6 +116,7 @@ class HistoryResource(Resource):
         # add brewCount in user table
         user = Users.query.get(claims['id'])
         user.brewCount += 1
+
 
         db.session.commit()
 
@@ -96,6 +131,15 @@ class HistoryResource(Resource):
     @jwt_required
     @internal_required
     def put(self, id):
+        """
+        Edit history, admin required
+
+        :<json int userID: id of user that use the recipe
+        :<json int recipeID: id of recipe user had used
+        :>json dict history: history
+        :status 200: success edit data
+        :status 204: history not found
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('userID', location='json', required=True)
         parser.add_argument('recipeID', location='json', required=True)
@@ -119,6 +163,14 @@ class HistoryResource(Resource):
     @jwt_required
     @internal_required
     def delete(self, id):
+        """
+        Delete history data, admin required
+
+        :param id: id of history data
+        :type id: int, required
+        :status 200: success delete data
+        :status 404: history not found
+        """
         history = History.query.get(id)
         if history is None:
             return {'code': 404, 'message': 'History Not Found'}, 404
@@ -126,10 +178,7 @@ class HistoryResource(Resource):
         db.session.delete(history)
         db.session.commit()
 
-        return {
-            'code': 200,
-            'message': 'History Deleted'
-        }, 200
+        return {'code': 200, 'message': 'History Deleted'}, 200
 
 
 api.add_resource(HistoryListResource, '')

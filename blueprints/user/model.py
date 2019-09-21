@@ -13,7 +13,7 @@ class Users(db.Model):
     photo = db.Column(db.String(250), nullable=False)
     status = db.Column(db.Integer, nullable=False)
     role = db.Column(db.Integer, nullable=False)
-    bio = db.Column(db.String(250), nullable=False)
+    bio = db.Column(db.String(250), nullable=True)
 
     responseFieldsDetails = {
         'id': fields.Integer,

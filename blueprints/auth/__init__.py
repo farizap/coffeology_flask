@@ -35,7 +35,15 @@ class CreateTokenResources(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def post(self):
-        '''User login'''
+        '''User login with email and password in json
+        
+        :<json string email: email user inputted from login form
+        :<json string password: password user inputted from login form
+        :>json string token: token for authentification
+        :status 200: input valid and user get token
+        :status 400: Input user invalid
+        
+        '''
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json', required=True)
         parser.add_argument('password', location='json', required=True)
@@ -50,8 +58,9 @@ class CreateTokenResources(Resource):
         # Hash inputtted password
         passwordHashed = hashlib.md5(body['password'].encode()).hexdigest()
         userQry = Users.query
-        
-        emailNotRegistered = Users.query.filter_by(email=body['email'].lower()).first()
+
+        emailNotRegistered = Users.query.filter_by(
+            email=body['email'].lower()).first()
         if emailNotRegistered is None:
             return {'code': 400, 'message': 'Email Belum Terdaftar'}, 400
 
@@ -63,7 +72,7 @@ class CreateTokenResources(Resource):
             token = create_access_token(identity=body['email'].lower(),
                                         user_claims=user_data)
         else:
-            return {'code': 401, 'message': 'invalid email or password'}, 401
+            return {'code': 400, 'message': 'invalid email or password'}, 401
         return {'code': 200, 'message': 'oke', 'token': token}, 200
 
 
