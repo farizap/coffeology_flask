@@ -10,7 +10,6 @@ api = Api(bp_methods)
 
 
 class MethodsResource(Resource):
-
     def __init__(self):
         pass
 
@@ -33,9 +32,13 @@ class MethodsResource(Resource):
         if methods == []:
             pass
         else:
-            return {'code': 200,
-                    'message': 'oke',
-                    'data': methods}, 200, {'Content-Type': 'application/json'}
+            return {
+                'code': 200,
+                'message': 'oke',
+                'data': methods
+            }, 200, {
+                'Content-Type': 'application/json'
+            }
 
 
 api.add_resource(MethodsResource, '')

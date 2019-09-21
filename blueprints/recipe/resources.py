@@ -24,6 +24,14 @@ class RecipesResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
+        """Return data about a recipes from 3 tables : Recipes, RecipeDetails, and Steps (filter by recipeID)
+
+        :param id: The id of the wanted recipes
+        :type id: int, required
+        :query details: If it is passed, data recipe returned
+        :status 200: Recipe is found and data returned returned
+        :status 404: No recipe was found with this id
+        """
         recipe = Recipes.query.get(id)
 
         if recipe is not None:
@@ -39,7 +47,6 @@ class RecipesResource(Resource):
                                                RecipeDetails.responseFields)
             resData['user'] = marshal(user, Users.responseFieldsJwt)
 
-
             stepList = []
             for step in steps:
                 stepList.append(marshal(step, Steps.responseFields))
@@ -52,6 +59,16 @@ class RecipesResource(Resource):
     @jwt_required
     @non_internal_required
     def post(self):
+        """Create new recipes
+
+        :reqheader Accept: application/json
+        :<json object recipes: recipe general info
+        :<json object recipeDetails: recipe detail info
+        :<json array steps: list of steps in the recipe
+        :query details: If it is passed, data added to DB
+        :status 201: Recipe created
+        :status 400: Invalid user input 
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('recipes', location='json')
         parser.add_argument('recipeDetails', location='json')
@@ -203,6 +220,83 @@ class RecipesListResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self):
+        """Get list of Recipes with optional params.
+
+        :param p: Page number
+        :type p: int, optional
+        :param rp: Number of entries per page
+        :type rp: int, optional
+        :param userID: filter by user who create the recipe
+        :type userID: int, optional
+        :param methodID: filter by method type
+        :type methodID: int, optional
+        :param orderby: order query by a column. i.e rating, difficulty, brewCount
+        :type orderby: string, optional
+        :param sort: sort query ascending or descending
+        :type sort: string, optional
+        :param methods: contain methods that user choose to filter
+        :type methods: string, optional 
+        :>json int pageNow: Page Now 
+        :>json int pageTotal: Total page from query
+        :>json dict recipes: dictionary that contains recipe general info
+        :>json dict recipeDetails: dictionary that contains recipe detail info
+        :>json array recipeSteps: array that contain dictionary of steps in the recipe     
+        :status 200: success get data
+
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+          GET /recipes/user 
+          Host: api.coffeology.shop
+          Accept: application/json
+
+          {
+              "code": 200,
+              "message": "oke",
+              "pageTotal": 1,
+              "pageNow": 1,
+              "data": [
+                  {
+                      "id": 2,
+                      "userID": 4,
+                      "methodID": 1,
+                      "originID": 3,
+                      "name": "french press 14",
+                      "beanName": "origin 3",
+                      "beanProcess": "difficulty 2",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 0,
+                      "difficulty": 2,
+                      "createdAt": "Sat, 21 Sep 2019 15:35:00 -0000",
+                      "time": 20,
+                      "coffeeWeight": 16,
+                      "water": 200
+                   },
+                  {
+                      "id": 3,
+                      "userID": 4,
+                      "methodID": 1,
+                      "originID": 3,
+                      "name": "french press 14",
+                      "beanName": "origin 3",
+                      "beanProcess": "difficulty 2",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 0,
+                      "difficulty": 2,
+                      "createdAt": "Sat, 21 Sep 2019 15:35:01 -0000",
+                      "time": 20,
+                      "coffeeWeight": 16,
+                      "water": 200
+                   }
+               ]
+           }
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
         parser.add_argument('rp', type=int, location='args', default=10)
@@ -292,6 +386,74 @@ class RecipesUserResource(Resource):
     @jwt_required
     @non_internal_required
     def get(self):
+        """Get recipe by userID from token
+
+        :param userID: the id of user
+        :type userID: int, required
+        :param p: Page number
+        :type p: int, optional
+        :param rp: Number of entries per page
+        :type rp: int, optional
+        :>json int pageNow: Page Now 
+        :>json int pageTotal: Total page from query
+        :>json array recipes: array that contains list of recipes
+        :status 200: success get recipes
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+          GET /recipes/user 
+          Host: api.coffeology.shop
+          Accept: application/json
+
+          {
+              "code": 200,
+              "message": "oke",
+              "pageTotal": 1,
+              "pageNow": 1,
+              "data": [
+                  {
+                      "id": 2,
+                      "userID": 4,
+                      "methodID": 1,
+                      "originID": 3,
+                      "name": "french press 14",
+                      "beanName": "origin 3",
+                      "beanProcess": "difficulty 2",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 0,
+                      "difficulty": 2,
+                      "createdAt": "Sat, 21 Sep 2019 15:35:00 -0000",
+                      "time": 20,
+                      "coffeeWeight": 16,
+                      "water": 200
+                   },
+                  {
+                      "id": 3,
+                      "userID": 4,
+                      "methodID": 1,
+                      "originID": 3,
+                      "name": "french press 14",
+                      "beanName": "origin 3",
+                      "beanProcess": "difficulty 2",
+                      "beanRoasting": "beanRoasting",
+                      "rating": 0.0,
+                      "reviewCount": 0,
+                      "brewCount": 0,
+                      "difficulty": 2,
+                      "createdAt": "Sat, 21 Sep 2019 15:35:01 -0000",
+                      "time": 20,
+                      "coffeeWeight": 16,
+                      "water": 200
+                   }
+               ]
+           }
+
+        """
+
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
         parser.add_argument('rp', type=int, location='args', default=10)
@@ -303,14 +465,19 @@ class RecipesUserResource(Resource):
 
         offset = (data['p'] * data['rp']) - data['rp']
 
-
         recipeList = []
         for recipe in recipes.limit(data['rp']).offset(offset).all():
             recipeList.append(marshal(recipe, Recipes.responseFields))
 
         pageTotal = math.ceil(recipes.count() / data['rp'])
 
-        return {'code': 200, 'message': 'oke', 'pageTotal': pageTotal ,'pageNow': data['p'], 'data': recipeList}, 200
+        return {
+            'code': 200,
+            'message': 'oke',
+            'pageTotal': pageTotal,
+            'pageNow': data['p'],
+            'data': recipeList
+        }, 200
 
 
 api.add_resource(RecipesListResource, '')

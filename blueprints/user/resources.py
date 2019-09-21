@@ -31,7 +31,7 @@ def isValidPassword(password):
 
 
 def isValidName(name):
-    # to validate name just alphabet      
+    # to validate name just alphabet
     if re.match(r"^[A-Za-z\s]+$", name):
         return True
     return False
@@ -62,7 +62,7 @@ class UserResource(Resource):
         parser.add_argument('password', location='json', required=True)
         parser.add_argument('name', location='json', required=True)
         parser.add_argument('photo', location='json', required=True)
-        parser.add_argument('bio', location='json', required=True)
+        parser.add_argument('bio', location='json', required=False, default="")
         data = parser.parse_args()
 
         dataEmail = data['email'].strip()
@@ -82,9 +82,9 @@ class UserResource(Resource):
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
 
-        dataBio = data['bio'].strip()
-        if dataBio == "":
-            return {'code': 400, 'message': 'Bio is not valid'}, 400
+        # dataBio = data['bio'].strip()
+        # if dataBio == "":
+        #     return {'code': 400, 'message': 'Bio is not valid'}, 400
 
         # password hashing
         passwordHash = hashlib.md5(dataPassword.encode())
@@ -107,8 +107,8 @@ class UserResource(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json')
-        parser.add_argument('passwordOld',location='json')
-        parser.add_argument('passwordNew',location='json')
+        parser.add_argument('passwordOld', location='json')
+        parser.add_argument('passwordNew', location='json')
         parser.add_argument('name', location='json')
         parser.add_argument('brewCount', type=int, location='json')
         parser.add_argument('recipeCount', type=int, location='json')
@@ -123,7 +123,7 @@ class UserResource(Resource):
 
         # check if passwordOld match
         if args['passwordOld'] is not None:
-            passwordOld = args['passwordOld'].strip()        
+            passwordOld = args['passwordOld'].strip()
             passwordOldHash = hashlib.md5(passwordOld.encode())
             if passwordOldHash.hexdigest() != userQry.password:
                 return {'code': 400, 'message': 'Wrong Password'}, 400
@@ -143,7 +143,10 @@ class UserResource(Resource):
         if args['passwordNew'] and args['passwordOld'] is not None:
             dataPassword = args['passwordNew'].strip()
             if isValidPassword(dataPassword) is False:
-                return {'code': 400, 'message': 'New Password is not valid'}, 400
+                return {
+                    'code': 400,
+                    'message': 'New Password is not valid'
+                }, 400
 
         # validation name
         if args['name'] is not None:
@@ -208,8 +211,9 @@ class UserMeResource(Resource):
         return {
             'code': 200,
             'message': 'oke',
-            'data': marshal(user, Users.responseFieldsJwt)}, 200
-            
+            'data': marshal(user, Users.responseFieldsJwt)
+        }, 200
+
 
 class UserListAdminResource(Resource):
     def __init__(self):
@@ -221,20 +225,21 @@ class UserListAdminResource(Resource):
     @jwt_required
     @internal_required
     def get(self):
-        parser=reqparse.RequestParser()
+        parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
         parser.add_argument('rp', type=int, location='args', default=25)
-        data=parser.parse_args()
+        data = parser.parse_args()
 
-        offset=(data['p'] * data['rp']) - data['rp']
+        offset = (data['p'] * data['rp']) - data['rp']
 
-        userQry=Users.query
+        userQry = Users.query
 
-        users=[]
+        users = []
         for user in userQry.limit(data['rp']).offset(offset).all():
             users.append(marshal(user, Users.responseFieldsJwt))
 
         return {'code': 200, 'message': 'oke', 'data': users}, 200
+
 
 api.add_resource(UserListAdminResource, '/admin')
 api.add_resource(UserResource, '', '/<id>')
