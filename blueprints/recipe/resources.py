@@ -426,6 +426,7 @@ class RecipesListResource(Resource):
         offset = (data['p'] * data['rp']) - data['rp']
 
         recipeQry = Recipes.query
+        recipeQry = recipeQry.order_by(desc(Recipes.id))
 
         # Fariz
         # filter by search
@@ -498,6 +499,7 @@ class RecipesUserResource(Resource):
     def get(self):
         claims = get_jwt_claims()
         recipes = Recipes.query.filter_by(userID=claims['id'])
+        recipes = recipes.order_by(desc(Recipes.id))
 
         recipeList = []
         for recipe in recipes.all():
