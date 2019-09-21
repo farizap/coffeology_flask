@@ -18,11 +18,11 @@ class Beans(db.Model):
     cleanCups = db.Column(db.Float, nullable=False)
     sweetness = db.Column(db.Float, nullable=False)
     overall = db.Column(db.Float, nullable=False)
-    description = db.Column(db.Text, nullable=True,default="")
-    cupping = db.Column(db.String(250), nullable=True,default="")
-    advantage = db.Column(db.String(30), nullable=True,default="")
-    disadvantage = db.Column(db.String(30), nullable=True,default="")
-    location = db.Column(db.String(30), nullable=True,default="")
+    description = db.Column(db.Text, nullable=True, default="")
+    cupping = db.Column(db.String(250), nullable=True, default="")
+    advantage = db.Column(db.String(250), nullable=True, default="")
+    disadvantage = db.Column(db.String(250), nullable=True, default="")
+    location = db.Column(db.String(250), nullable=True, default="")
 
     responseFields = {
         'id': fields.Integer,
@@ -52,10 +52,10 @@ class Beans(db.Model):
         'name': fields.String
     }
 
-
-    def __init__(self, originID, name, photo, fragrance, flavor, aftertaste, acidity, body, balance, uniformity, cleanCups, sweetness, 
-                 overall, description, cupping,  advantage,
-                 disadvantage, location):
+    def __init__(self, originID, name, photo, fragrance, flavor, aftertaste,
+                 acidity, body, balance, uniformity, cleanCups, sweetness,
+                 overall, description, cupping, advantage, disadvantage,
+                 location):
         self.originID = originID
         self.name = name
         self.photo = photo

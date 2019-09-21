@@ -30,6 +30,62 @@ class ReviewResource(Resource):
         :>json array review: array cointaining list of review that match the query
         :status 200: success get data of review
         :status 404: review not found
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+          {
+              "code": 200,
+              "message": "oke",
+              "pageTotal": 1,
+              "pageNow": 1,
+              "data": [
+                  {
+                      "id": 1,
+                      "userID": 4,
+                      "recipeID": 3,
+                      "historyID": 1,
+                      "content": "good",
+                      "rating": 1,
+                      "createdAt": "Sat, 21 Sep 2019 18:47:57 -0000",
+                      "photo": "a",
+                      "user": {
+                          "id": 4,
+                          "email": "fapriyanto@alterra.id",
+                          "name": "zxc",
+                          "brewCount": 1,
+                          "recipeCount": 0,
+                          "photo": "",
+                          "status": 1,
+                          "role": 0,
+                          "bio": ""
+                      }
+                  },
+                  {
+                      "id": 2,
+                      "userID": 4,
+                      "recipeID": 3,
+                      "historyID": 1,
+                      "content": "good",
+                      "rating": 1,
+                      "createdAt": "Sat, 21 Sep 2019 18:47:59 -0000",
+                      "photo": "a",
+                      "user": {
+                          "id": 4,
+                          "email": "fapriyanto@alterra.id",
+                          "name": "zxc",
+                          "brewCount": 1,
+                          "recipeCount": 0,
+                          "photo": "",
+                          "status": 1,
+                          "role": 0,
+                          "bio": ""
+                      }
+                  }
+              ]
+          }
+
         """
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
