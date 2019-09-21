@@ -20,10 +20,11 @@ before_script:
 script:
 - sudo chmod +x deploy.sh
 - sudo chmod 600 deploy_rsa
-- sudo echo -e "class Config():\n\tpass\nclass DevelopmentConfig(Config):\n\tDEBUG = True\n\tSQLALCHEMY_DATABASE_URI = '${DATABASE_URI_DEVELOPMENT}'\n\nclass TestingConfig(Config):\n\tTESTING = True\n\tSQLALCHEMY_DATABASE_URI = '${DATABASE_URI_TESTING}'" > config.py
-- export FLASK_ENV=testing
+- sudo echo -e "class Config():\n\tpass\nclass DevelopmentConfig(Config):\n\tTESTING = True\n\tSQLALCHEMY_DATABASE_URI = '${DATABASE_URI_TESTING}'" > config.py
 - pytest tests/ || travis_terminate 0
-- export FLASK_ENV=development
+- sudo echo -e "class Config():\n\tpass\nclass DevelopmentConfig(Config):\n\tDEBUG = True\n\tSQLALCHEMY_DATABASE_URI = '${DATABASE_URI_DEVELOPMENT}'" > config.py
+
+
 after_script:
 - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 - ls
