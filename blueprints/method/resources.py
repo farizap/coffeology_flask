@@ -29,16 +29,14 @@ class MethodsResource(Resource):
         methods = []
         for method in methodsQry.limit(data['rp']).offset(offset).all():
             methods.append(marshal(method, Methods.responseFields))
-        if methods == []:
-            pass
-        else:
-            return {
-                'code': 200,
-                'message': 'oke',
-                'data': methods
-            }, 200, {
-                'Content-Type': 'application/json'
-            }
+
+        return {
+            'code': 200,
+            'message': 'oke',
+            'data': methods
+        }, 200, {
+            'Content-Type': 'application/json'
+        }
 
 
 api.add_resource(MethodsResource, '')

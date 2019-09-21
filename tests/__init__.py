@@ -11,6 +11,7 @@ from blueprints.recipeDetail.model import RecipeDetails
 from blueprints.user.model import Users
 from blueprints.step.model import Steps
 from blueprints.history.model import History
+from blueprints.bean.model import Beans
 
 
 def callClient(request):
@@ -33,24 +34,28 @@ def resetDatabase():
     method = Methods("name", "icon", 1)
     recipe = Recipes(1, "name", 1, 1, "beanName", "beanProcess",
                      "beanRoasting", 1, 1, 1, 1)
-    user = Users("user@user.com", passwordHashed, "name", "photo", "bio")
+    recipe2 = Recipes(2, "name", 1, 1, "beanName", "beanProcess",
+                     "beanRoasting", 1, 1, 1, 1)
     user2 = Users("user2@user.com", passwordHashed, "name", "photo", "bio")
+    user = Users("user@user.com", passwordHashed, "name", "photo", "bio")
     admin = Users("admin@admin.com", passwordHashed, "name", "photo", "bio")
     step = Steps(1, 1, 1, "note", 1, 1)
     recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
                                  92)
-    history = History(1, 1)
+    bean = Beans(5, "nama11", "photo11", 0.4, 0.2, 0.7, 0.1, 0.8, 0.3, 0.5, 0.2, 0.45, 0.5, "deskripsi", "cupping", "advatage", "disadvantage", "lokasi")
+
 
     # save users to database
     db.session.add(method)
     db.session.add(recipe)
+    db.session.add(recipe2)
     db.session.add(recipeDetail)
-    db.session.add(user)
     db.session.add(user2)
+    db.session.add(user)
     db.session.add(admin)
     admin.role = 1
     db.session.add(step)
-    db.session.add(history)
+    db.session.add(bean)
     db.session.commit()
 
 

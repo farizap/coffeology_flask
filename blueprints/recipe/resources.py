@@ -206,11 +206,172 @@ class RecipesResource(Resource):
                          dataStep['amount'])
 
             db.session.add(step)
+        
+        # add total recipeCount in data user
+        user = Users.query.get(claims['id'])
+        user.recipeCount += 1
 
         db.session.commit()
 
         return {'code': 201, 'message': 'created'}, 201
 
+    @jwt_required
+    @non_internal_required
+    def put(self, id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('recipes', location='json')
+        parser.add_argument('recipeDetails', location='json')
+        parser.add_argument('steps', location='json')
+        data = parser.parse_args()
+
+        # convert string into dict or list
+        dataRecipesDict = ast.literal_eval(data['recipes'])
+        dataRecipeDetailsDict = ast.literal_eval(data['recipeDetails'])
+        dataSteps = ast.literal_eval(data['steps'])
+
+        # check all data's recipes is not null
+        for key in dataRecipesDict:
+            if type(dataRecipesDict[key]) == int:
+                continue
+
+            # to remove space at end
+            dataRecipesDict[key] = dataRecipesDict[key].strip()
+            if dataRecipesDict[key] == "":
+                return {
+                    'code': 400,
+                    'message': f'{key} Resep tidak boleh kosong'
+                }, 400
+
+        # check all data's recipeDetails is not null
+        for key in dataRecipeDetailsDict:
+            if type(dataRecipeDetailsDict[key]) == float:
+                continue
+            if type(dataRecipeDetailsDict[key]) == int:
+                continue
+            # to remove space at end
+            dataRecipeDetailsDict[key] = dataRecipeDetailsDict[key].strip()
+            if dataRecipeDetailsDict[key] == "":
+                return {
+                    'code': 400,
+                    'message': f'{key} Resep Detail tidak boleh kosong'
+                }, 400
+
+        # check all data's steps is not null
+        if dataSteps == []:
+            return {'code': 400, 'message': 'Steps tidak boleh kosong'}, 400
+        for stepDict in dataSteps:
+            for key in stepDict:
+                if type(stepDict[key]) == int:
+                    continue
+
+                stepDict[key] = stepDict[key].strip()  # to remove space at end
+                if stepDict[key] == "":
+                    return {
+                        'code': 400,
+                        'message': f'{key} Step tidak boleh kosong'
+                    }, 400
+
+        recipeDataInt = ['methodID', 'originID', 'difficulty']
+
+        # validate input data int for recipe
+        for data in recipeDataInt:
+            try:
+                dataRecipesDict[data] = int(dataRecipesDict[data])
+            except Exception as e:
+                return {
+                    'code': 400,
+                    'message': f'{data} Resep harus integer'
+                }, 400
+
+        # validate input data int for recipeDetails
+        for key in dataRecipeDetailsDict:
+
+            if key != 'note':
+                if key == 'waterTemp' or key == 'grindSize':
+                    try:
+                        dataRecipeDetailsDict[key] = int(
+                            dataRecipeDetailsDict[key])
+                    except Exception as e:
+                        return {
+                            'code': 400,
+                            'message': f'{key} Resep Detail harus integer'
+                        }, 400
+                else:
+                    try:
+                        dataRecipeDetailsDict[key] = float(
+                            dataRecipeDetailsDict[key])
+                    except Exception as e:
+                        return {
+                            'code': 400,
+                            'message': f'{key} Resep Detail harus float'
+                        }, 400
+
+        # validate input data int for recipeDetails
+        for stepDict in dataSteps:
+            for key in stepDict:
+                if key != 'note':
+                    try:
+                        stepDict[key] = int(stepDict[key])
+                    except Exception as e:
+                        return {
+                            'code': 400,
+                            'message': f'{key} Step harus integer'
+                        }, 400
+
+        # get claims
+        claims = get_jwt_claims()
+        recipe = Recipes.query.get(id)
+
+        # validate userID in recipe
+        if claims['id'] != recipe.userID:
+            return {
+                    'code': 400,
+                    'message': "Anda Tidak Dapat Mengedit Resep Ini"
+            }, 400
+
+        # edit data recipe
+        recipe.name = dataRecipesDict['name']
+        recipe.methodID = dataRecipesDict['methodID']
+        recipe.originID = dataRecipesDict['originID']
+        recipe.beanName = dataRecipesDict['beanName']
+        recipe.beanProcess = dataRecipesDict['beanProcess']
+        recipe.beanRoasting = dataRecipesDict['beanRoasting']
+        recipe.difficulty = dataRecipesDict['difficulty']
+        recipe.time = dataRecipesDict['time']
+        recipe.coffeeWeight = dataRecipesDict['coffeeWeight']
+        recipe.water = dataRecipesDict['water']
+
+        # edit data RecipeDetails
+        recipeDetail = RecipeDetails.query.filter_by(recipeID=id).first()
+        recipeDetail.fragrance = dataRecipeDetailsDict['fragrance']
+        recipeDetail.aroma = dataRecipeDetailsDict['aroma']
+        recipeDetail.cleanliness = dataRecipeDetailsDict['cleanliness']
+        recipeDetail.sweetness = dataRecipeDetailsDict['sweetness']
+        recipeDetail.taste = dataRecipeDetailsDict['taste']
+        recipeDetail.acidity = dataRecipeDetailsDict['acidity']
+        recipeDetail.aftertaste = dataRecipeDetailsDict['aftertaste']
+        recipeDetail.balance = dataRecipeDetailsDict['balance']
+        recipeDetail.globalTaste = dataRecipeDetailsDict['globalTaste']
+        recipeDetail.body = dataRecipeDetailsDict['body']
+        recipeDetail.note = dataRecipeDetailsDict['note']
+        recipeDetail.grindSize = dataRecipeDetailsDict['grindSize']
+        recipeDetail.waterTemp = dataRecipeDetailsDict['waterTemp']
+
+        # edit data Steps
+        stepsOld = Steps.query.filter_by(recipeID=id)
+        for step in stepsOld:
+            db.session.delete(step)
+
+        for stepNumber, dataStep in enumerate(dataSteps, 1):
+            step = Steps(recipe.id, stepNumber, dataStep['stepTypeID'],
+                         dataStep['note'], dataStep['time'],
+                         dataStep['amount'])
+
+            db.session.add(step)
+
+        db.session.commit()
+
+        return {'code': 200, 'message': 'edited'}, 200
 
 class RecipesListResource(Resource):
     def __init__(self):
@@ -322,7 +483,8 @@ class RecipesListResource(Resource):
         # filter by search
         if data['search'] is not None:
             recipeQry = recipeQry.filter(
-                Recipes.name.like('%' + data['search'] + '%'))
+                Recipes.name.like('%' + data['search'] + '%')
+                | Recipes.beanName.like('%' + data['search'] + '%'))
 
         # filter by methods
         if data['methods'] is not None:

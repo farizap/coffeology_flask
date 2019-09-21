@@ -61,8 +61,8 @@ class UserResource(Resource):
         parser.add_argument('email', location='json', required=True)
         parser.add_argument('password', location='json', required=True)
         parser.add_argument('name', location='json', required=True)
-        parser.add_argument('photo', location='json', required=True)
-        parser.add_argument('bio', location='json', required=False, default="")
+        parser.add_argument('photo', location='json', default="")
+        parser.add_argument('bio', location='json', default="")
         data = parser.parse_args()
 
         dataEmail = data['email'].strip()
