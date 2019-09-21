@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
 from .model import History
 from blueprints.recipe.model import Recipes
+from blueprints.user.model import Users
 from blueprints.step.model import Steps
 from sqlalchemy import desc
 from blueprints import app, db, internal_required, non_internal_required
@@ -107,15 +108,20 @@ class HistoryResource(Resource):
 
         db.session.commit()
 
-        app.logger.debug('DEBUG : %s', history)
 
-        # add brewCount
+        # add brewCount in reipe table
         recipe = Recipes.query.get(data['recipeID'])
-        recipeBrewCount = marshal(recipe, Recipes.responseFields)['brewCount']
+        recipe.brewCount += 1
 
-        recipe.brewCount = recipeBrewCount + 1
+        # add brewCount in user table
+        user = Users.query.get(claims['id'])
+        user.brewCount += 1
+
+
         db.session.commit()
 
+        app.logger.debug('DEBUG : %s', history)
+        
         return {
             'code': 201,
             'message': 'oke',
