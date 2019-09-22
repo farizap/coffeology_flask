@@ -19,15 +19,20 @@ class BeanResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
+        """Get beans detail data
+
+        :param id: id of beans
+        :type id: int, required
+        :>json dict data: dictionary containing beans data
+        :status 200: success get data of beans
+        :status 404: beans not found
+        """
         bean = Beans.query.get(id)
         if bean is not None:
             beanData = marshal(bean, Beans.responseFields)
-            return {
-                'code': 200,
-                'message': 'oke',
-                'data': beanData
-            }, 200
+            return {'code': 200, 'message': 'oke', 'data': beanData}, 200
         return {'code': 404, 'message': 'Bean Not Found'}, 404
+
 
 class BeanListResource(Resource):
     def __init__(self):
@@ -37,16 +42,22 @@ class BeanListResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self):
+        """Get list of beans
+
+        :>json dict data: dictionary containing list of beans data
+        :status 200: success get data of beans
+        """
         beans = Beans.query
 
         listBean = {}
         # show result with filter by origin ID
-        for number in range(1,6):
+        for number in range(1, 6):
             beanByOriginID = Beans.query.filter_by(originID=number)
             beanTemporaryList = []
             for bean in beanByOriginID.all():
-                beanTemporaryList.append(marshal(bean, Beans.responseFieldsGetAll))
-            listBean[number] =  beanTemporaryList
+                beanTemporaryList.append(
+                    marshal(bean, Beans.responseFieldsGetAll))
+            listBean[number] = beanTemporaryList
 
         return {'code': 200, 'message': 'oke', 'data': listBean}, 200
 

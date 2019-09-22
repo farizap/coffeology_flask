@@ -27,7 +27,9 @@ class TestUserCrud():
 
     def testUserGetAllValid(self, client):
         token = createTokenInternal()
-        res = client.get('/users/admin', headers={'Authorization': 'Bearer ' + token},  content_type='application/json')
+        res = client.get('/users/admin',
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
@@ -36,11 +38,12 @@ class TestUserCrud():
 
     def testUserGetByTokenValid(self, client):
         token = createTokenNonInternal()
-        res = client.get('/users/me', headers={'Authorization': 'Bearer ' + token}, content_type='application/json')
+        res = client.get('/users/me',
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
-
 
 # user post
 
@@ -51,7 +54,7 @@ class TestUserCrud():
             'password': 'Password1',
             'name': 'name',
             'photo': 'photo1',
-            "bio" : "bio"
+            "bio": "bio"
         }
         res = client.post('/users',
                           data=json.dumps(data),
@@ -67,7 +70,7 @@ class TestUserCrud():
             'email': 'coba@coba.com',
             'password': 'Password',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -83,7 +86,7 @@ class TestUserCrud():
             'email': 'c@c.c',
             'password': 'Password',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -99,7 +102,7 @@ class TestUserCrud():
             'email': 'cccc.cccc',
             'password': 'Password',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -115,7 +118,7 @@ class TestUserCrud():
             'email': 'coba1@coba.com',
             'password': 'password',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -131,7 +134,7 @@ class TestUserCrud():
             'email': 'coba1@coba.com',
             'password': 'Password1',
             'name': 'n4me',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.post('/users',
@@ -152,7 +155,7 @@ class TestUserCrud():
             'name': 'name',
             'brewCount': 1,
             'recipeCount': 1,
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo1'
         }
         res = client.put('/users',
@@ -170,13 +173,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password1',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -188,13 +191,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password1',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -206,13 +209,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password1',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -224,13 +227,13 @@ class TestUserCrud():
             'passwordOld': 'Password123',
             'passwordNew': 'Password1',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -242,13 +245,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password',
             'name': 'name',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -260,13 +263,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password1',
             'name': 'name',
-            "bio" : "       ",
+            "bio": "       ",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -278,13 +281,13 @@ class TestUserCrud():
             'passwordOld': 'Password1',
             'passwordNew': 'Password1',
             'name': 'n4me',
-            "bio" : "bio",
+            "bio": "bio",
             'photo': 'photo'
         }
         res = client.put('/users',
-                          data=json.dumps(data),
+                         data=json.dumps(data),
                          headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -293,7 +296,8 @@ class TestUserCrud():
 
     def testUserDeleteValid(self, client):
         # token = create_token_non_internal()
-        res = client.delete(f'/users/{TestUserCrud.user_id}', content_type='application/json')
+        res = client.delete(f'/users/{TestUserCrud.user_id}',
+                            content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
@@ -323,15 +327,32 @@ class TestUserCrud():
         assert res.status_code == 200
 
     def testUserMeOptionsValid(self, client):
-        res = client.options('/users/me',
-         content_type='application/json')
+        res = client.options('/users/me', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testUserAdminOptionsValid(self, client):
-        res = client.options('/users/admin',
-         content_type='application/json')
+        res = client.options('/users/admin', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
+
+        # recipe delete by user
+    def testRecipeUserDeleteValid(self, client):
+        token = createTokenNonInternal()
+        res = client.delete('/recipes/1',
+                            headers={'Authorization': 'Bearer ' + token},
+                            content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+
+    def testRecipeUserDeleteInvalid(self, client):
+        token = createTokenNonInternal()
+        res = client.delete('/recipes/1',
+                            headers={'Authorization': 'Bearer ' + token},
+                            content_type='application/json')
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 404
