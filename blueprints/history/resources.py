@@ -24,8 +24,7 @@ class HistoryListResource(Resource):
     @jwt_required
     @non_internal_required
     def get(self):
-        """
-        Get history by userID from token
+        """Get history by userID from token
 
         :param userID: the id of user
         :type userID: int, required
@@ -122,8 +121,7 @@ class HistoryResource(Resource):
     @jwt_required
     @non_internal_required
     def post(self):
-        """
-        Post new history when user finished tutorial
+        """Post new history when user finished tutorial
 
         :param userID: from token
         :type userID: int, required

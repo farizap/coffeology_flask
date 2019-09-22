@@ -831,7 +831,7 @@ class TestRecipeCrud():
                           content_type='application/json')
 
         res_json = json.loads(res.data)
-        assert res.status_code == 400
+        assert res.status_code == 403
 
     def testRecipePutInvalidDataRecipe(self, client):
         token = createTokenNonInternal()
@@ -1389,3 +1389,5 @@ class TestRecipeCrud():
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
+
+
