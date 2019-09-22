@@ -10,7 +10,6 @@ api = Api(bp_methods)
 
 
 class MethodsResource(Resource):
-
     def __init__(self):
         pass
 
@@ -30,10 +29,14 @@ class MethodsResource(Resource):
         methods = []
         for method in methodsQry.limit(data['rp']).offset(offset).all():
             methods.append(marshal(method, Methods.responseFields))
-        
-        return {'code': 200,
-                'message': 'oke',
-                'data': methods}, 200, {'Content-Type': 'application/json'}
+
+        return {
+            'code': 200,
+            'message': 'oke',
+            'data': methods
+        }, 200, {
+            'Content-Type': 'application/json'
+        }
 
 
 api.add_resource(MethodsResource, '')

@@ -10,7 +10,6 @@ api = Api(bp_steps)
 
 
 class StepListResource(Resource):
-
     def __init__(self):
         pass
 
@@ -18,6 +17,18 @@ class StepListResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self):
+        """Get list of Steps in recipe by id recipeID
+
+        :param p: Page number
+        :type p: int, optional
+        :param rp: Number of entries per page
+        :type rp: int, optional
+        :param recipeID: filter by id of a recipe
+        :type recipeID: int, required
+        :>json array steps: array cointaining list of steps that match recipeID
+        :status 200: success get data of steps
+        :status 404: steps not found
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
         parser.add_argument('rp', type=int, location='args', default=25)
