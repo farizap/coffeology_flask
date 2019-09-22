@@ -34,7 +34,9 @@ def internal_required(fn):
             return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
+
     return wrapper
+
 
 # Buat Decorator untuk non-internal
 
@@ -44,10 +46,11 @@ def non_internal_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['role'] == 1:        
+        if claims['role'] == 1:
             return {'code': 403, 'message': 'Forbidden Non-Internal Only'}, 403
         else:
             return fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -61,7 +64,6 @@ try:
 except Exception as e:
     raise e
 
-
 # Setting Database
 app.config['APP_DEBUG'] = True
 # localhost aka 127.0.0.1
@@ -72,6 +74,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+
 
 # log error (middlewares)
 @app.after_request
@@ -88,12 +91,11 @@ def after_request(response):
         'request': requestData,
         'response': json.loads(response.data.decode('utf-8'))
     }
-    app.logger.warning("REQUEST_LOG\t%s",
-                       json.dumps(data))
+    app.logger.warning("REQUEST_LOG\t%s", json.dumps(data))
     return response
 
+
 from blueprints.user.resources import bp_users
-from blueprints.method.resources import bp_methods
 from blueprints.recipe.resources import bp_recipes
 from blueprints.recipeDetail.resources import bp_recipeDetails
 from blueprints.step.resources import bp_steps
@@ -104,7 +106,6 @@ from blueprints.bean.resources import bp_beans
 
 app.register_blueprint(bp_users, url_prefix='/users')
 app.register_blueprint(bp_auth, url_prefix='/token')
-app.register_blueprint(bp_methods, url_prefix='/methods')
 app.register_blueprint(bp_recipes, url_prefix='/recipes')
 app.register_blueprint(bp_recipeDetails, url_prefix='/recipedetails')
 app.register_blueprint(bp_steps, url_prefix='/steps')
