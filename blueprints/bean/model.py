@@ -20,9 +20,9 @@ class Beans(db.Model):
     overall = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True,default="")
     cupping = db.Column(db.String(250), nullable=True,default="")
-    advantage = db.Column(db.String(30), nullable=True,default="")
-    disadvantage = db.Column(db.String(30), nullable=True,default="")
-    location = db.Column(db.String(30), nullable=True,default="")
+    advantage = db.Column(db.String(250), nullable=True,default="")
+    disadvantage = db.Column(db.String(250), nullable=True,default="")
+    location = db.Column(db.String(250), nullable=True,default="")
 
     responseFields = {
         'id': fields.Integer,
