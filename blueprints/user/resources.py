@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
 from .model import Users
 from sqlalchemy import desc
-from blueprints import app, db, internal_required, non_internal_required
+from blueprints import app, db, internalRequired, nonInternalRequired
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import re
 import hashlib
@@ -13,7 +13,7 @@ api = Api(bp_users)
 
 def isValidEmail(email):
     """Validate email using reGex"""
-    pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
+    pattern = r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
     if len(email) > 7:
         if re.match(pattern, email) is not None:
             return True
@@ -23,7 +23,10 @@ def isValidEmail(email):
 
 
 def isValidPassword(password):
-    """to validate password, at least one capital and one number with minimum 6 character long """
+    """
+    to validate password, at least one capital and one number
+    with minimum 6 character long
+    """
     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
         return True
     else:
@@ -51,12 +54,12 @@ class UserResource(Resource):
         :>json dict data: consist of data user
         :status 200: user found and data return as response
         :status 404: user not found
-        
+
         **Example response**:
 
         .. sourcecode:: http
 
-          
+
           {
               "code": 200,
               "message": "oke",
@@ -118,9 +121,6 @@ class UserResource(Resource):
         if isValidName(dataName) is False:
             return {'code': 400, 'message': 'Name is not valid'}, 400
 
-        # dataBio = data['bio'].strip()
-        # if dataBio == "":
-        #     return {'code': 400, 'message': 'Bio is not valid'}, 400
 
         # password hashing
         passwordHash = hashlib.md5(dataPassword.encode())
@@ -139,13 +139,15 @@ class UserResource(Resource):
         }, 201
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def put(self):
         '''User edit account info
 
-        :<json string email: email user 
-        :<json string passwordOld: old password user inputted from change password form
-        :<json string passwordNew: new password user inputted from change password form
+        :<json string email: email user
+        :<json string passwordOld: old password user inputted
+                                   from change password form
+        :<json string passwordNew: new password user inputted
+                                   from change password form
         :<json string name: name user inputted in edit profile form
         :<json string photo: url photo of user
         :<json string bio: bio of user inputted in edit profile form
@@ -254,7 +256,7 @@ class UserMeResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def get(self):
         """Get user information from token
 
@@ -262,7 +264,7 @@ class UserMeResource(Resource):
 
         .. sourcecode:: http
 
-          
+
           {
               "code": 200,
               "message": "oke",
@@ -297,7 +299,7 @@ class UserListAdminResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     @jwt_required
-    @internal_required
+    @internalRequired
     def get(self):
         '''Get list of users, admin required
 

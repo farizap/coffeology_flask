@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal
 from blueprints.review.model import Reviews
-from blueprints import app, db, internal_required, non_internal_required
+from blueprints import app, db, internalRequired, nonInternalRequired
 from flask_jwt_extended import jwt_required, get_jwt_claims
 from blueprints.recipe.model import Recipes
 from blueprints.user.model import Users
@@ -27,7 +27,8 @@ class ReviewResource(Resource):
         :type rp: int, optional
         :param recipeID: filter by id of a recipe
         :type recipeID: int, optional
-        :>json array review: array cointaining list of review that match the query
+        :>json array review: array cointaining list of review
+                             that match the query
         :status 200: success get data of review
         :status 404: review not found
 
@@ -122,7 +123,7 @@ class ReviewResource(Resource):
         }, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def post(self):
         """Post new review user submitted after running a coffee guide
 
@@ -172,7 +173,7 @@ class ReviewResource(Resource):
         }, 201
 
     @jwt_required
-    @internal_required
+    @internalRequired
     def put(self, id):
         """Edit review, admin required
 
@@ -211,10 +212,10 @@ class ReviewResource(Resource):
         return {'code': 200, 'message': 'Review updated'}, 200
 
     @jwt_required
-    @internal_required
+    @internalRequired
     def delete(self, id):
         """Delete review data, admin required
-        
+
         :param id: id of review data
         :type id: int, required
         :status 200: success delete data

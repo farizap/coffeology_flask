@@ -7,40 +7,35 @@ class TestBeanCrud():
 
     resetDatabase()
 
-# step get all
+    # step get all
     def testStepGetAllValid(self, client):
-        res = client.get('/beans',
-                         content_type='application/json')
+        res = client.get('/beans', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-# step get by id
+    # step get by id
     def testStepGetByIDValid(self, client):
-        res = client.get('/beans/1',
-                         content_type='application/json')
+        res = client.get('/beans/1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testStepGetByIDInvalid(self, client):
-        res = client.get('/beans/-1',
-                         content_type='application/json')
+        res = client.get('/beans/-1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-# step options
+    # step options
     def testStepOptionsValidByID(self, client):
-        res = client.options('/beans/1',
-                             content_type='application/json')
+        res = client.options('/beans/1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testStepOptionsValid(self, client):
-        res = client.options('/beans',
-                             content_type='application/json')
+        res = client.options('/beans', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
