@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
 from blueprints.recipeDetail.model import RecipeDetails
-from blueprints import app, db, internal_required, non_internal_required
+from blueprints import app, db, nonInternalRequired
 from flask_jwt_extended import jwt_required, get_jwt_claims
 
 bp_recipeDetails = Blueprint('recipeDetails', __name__)
@@ -25,7 +25,8 @@ class RecipeDetailsListResource(Resource):
         :type rp: int, optional
         :param recipeID: filter by id of a recipe
         :type recipeID: int, optional
-        :>json array recipeDetails: array cointaining list of recipeDetails that match the query
+        :>json array recipeDetails: array cointaining list of recipeDetails
+                                    that match the query
         :status 200: success get data of recipeDetails
         :status 404: recipeDetails not found
         """
