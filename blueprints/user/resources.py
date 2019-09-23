@@ -12,7 +12,7 @@ api = Api(bp_users)
 
 
 def isValidEmail(email):
-    """Validate email using reGex"""
+    # Validate email using reGex
     pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
     if len(email) > 7:
         if re.match(pattern, email) is not None:
@@ -23,7 +23,7 @@ def isValidEmail(email):
 
 
 def isValidPassword(password):
-    """to validate password, at least one capital and one number with minimum 6 character long """
+    # to validate password, at least one capital and one number with minimum 6 character long
     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
         return True
     else:
@@ -31,7 +31,7 @@ def isValidPassword(password):
 
 
 def isValidName(name):
-    """to validate name just alphabet"""
+    # to validate name just alphabet
     if re.match(r"^[A-Za-z\s]+$", name):
         return True
     return False
