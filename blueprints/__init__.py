@@ -25,7 +25,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 jwt = JWTManager(app)
 
 
-def internal_required(fn):
+def internalRequired(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -41,7 +41,7 @@ def internal_required(fn):
 # Buat Decorator untuk non-internal
 
 
-def non_internal_required(fn):
+def nonInternalRequired(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()

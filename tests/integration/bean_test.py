@@ -14,8 +14,7 @@ class TestBeanCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-# step get by id
-
+    # step get by id
     def testStepGetByIDValid(self, client):
         res = client.get('/beans/1', content_type='application/json')
 
@@ -28,9 +27,7 @@ class TestBeanCrud():
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-
-# step options
-
+    # step options
     def testStepOptionsValidByID(self, client):
         res = client.options('/beans/1', content_type='application/json')
 

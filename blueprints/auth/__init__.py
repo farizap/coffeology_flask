@@ -13,7 +13,7 @@ api = Api(bp_auth)
 
 def isValidEmail(email):
     # to validate email
-    pattern = "^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
+    pattern = r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]{2,}$"
     if len(email) > 7:
         if re.match(pattern, email) is not None:
             return True
@@ -23,7 +23,10 @@ def isValidEmail(email):
 
 
 def isValidPassword(password):
-    # to validate password minimum 6 characters, at least one capital and one number
+    '''
+    to validate password minimum 6 characters
+    at least one capital and one number
+    '''
     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d]{6,30}$", password):
         return True
     else:
@@ -36,13 +39,13 @@ class CreateTokenResources(Resource):
 
     def post(self):
         '''User login with email and password in json
-        
+
         :<json string email: email user inputted from login form
         :<json string password: password user inputted from login form
         :>json string token: token for authentification
         :status 200: input valid and user get token
         :status 400: Input user invalid
-        
+
         '''
         parser = reqparse.RequestParser()
         parser.add_argument('email', location='json', required=True)

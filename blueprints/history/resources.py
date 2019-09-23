@@ -5,7 +5,7 @@ from blueprints.recipe.model import Recipes
 from blueprints.user.model import Users
 from blueprints.step.model import Steps
 from sqlalchemy import desc
-from blueprints import app, db, internal_required, non_internal_required
+from blueprints import app, db, internalRequired, nonInternalRequired
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import ast
 import math
@@ -22,7 +22,7 @@ class HistoryListResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def get(self):
         """Get history by userID from token
 
@@ -34,12 +34,12 @@ class HistoryListResource(Resource):
         :type rp: int, optional
         :param sort: sort query ascending or descending
         :type sort: string, optional
-        :>json int pageNow: Page Now 
+        :>json int pageNow: Page Now
         :>json int pageTotal: Total page from query
         :>json array histories: contain recipes that users has used
         :status 200: success get recipes
 
-        
+
         **Example response**:
 
         .. sourcecode:: http
@@ -119,14 +119,15 @@ class HistoryResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def post(self):
         """Post new history when user finished tutorial
 
         :param userID: from token
         :type userID: int, required
-        :<json int recipeID: id from recipe user just used 
-        :>json dict history: history response field: id, recipeID, userID, createdAt
+        :<json int recipeID: id from recipe user just used
+        :>json dict history: history response field: id,
+                             recipeID, userID, createdAt
         :status 201: success create data
         """
         claims = get_jwt_claims()
@@ -159,7 +160,7 @@ class HistoryResource(Resource):
         }, 201
 
     @jwt_required
-    @internal_required
+    @internalRequired
     def put(self, id):
         """
         Edit history, admin required
@@ -192,7 +193,7 @@ class HistoryResource(Resource):
         }, 200
 
     @jwt_required
-    @internal_required
+    @internalRequired
     def delete(self, id):
         """
         Delete history data, admin required

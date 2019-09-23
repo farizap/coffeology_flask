@@ -1,13 +1,10 @@
 from flask import Blueprint
 from flask_restful import Resource, Api, reqparse, marshal, inputs
-
 from sqlalchemy import desc
-from blueprints import app, db, internal_required, non_internal_required
+from blueprints import app, db, nonInternalRequired
 from flask_jwt_extended import jwt_required, get_jwt_claims
 import ast
 import math
-bp_recipes = Blueprint('recipes', __name__)
-api = Api(bp_recipes)
 
 # import model
 from blueprints.recipe.model import Recipes
@@ -16,6 +13,9 @@ from blueprints.step.model import Steps
 from blueprints.user.model import Users
 from blueprints.history.model import History
 from blueprints.review.model import Reviews
+
+bp_recipes = Blueprint('recipes', __name__)
+api = Api(bp_recipes)
 
 
 class RecipesResource(Resource):
@@ -26,7 +26,8 @@ class RecipesResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     def get(self, id):
-        """Return data about a recipes from 3 tables : Recipes, RecipeDetails, and Steps (filter by recipeID)
+        """Return data about a recipes from 3 tables :
+           Recipes, RecipeDetails, and Steps (filter by recipeID)
 
         :param id: The id of the wanted recipes
         :type id: int, required
@@ -117,7 +118,7 @@ class RecipesResource(Resource):
         return {'code': 404, 'message': 'Recipe Not Found'}, 404
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def post(self):
         """Create new recipes
 
@@ -127,7 +128,7 @@ class RecipesResource(Resource):
         :<json array steps: list of steps in the recipe
         :query details: If it is passed, data added to DB
         :status 201: Recipe created
-        :status 400: Invalid user input 
+        :status 400: Invalid user input
         """
         parser = reqparse.RequestParser()
         parser.add_argument('recipes', location='json')
@@ -276,7 +277,7 @@ class RecipesResource(Resource):
         return {'code': 201, 'message': 'created'}, 201
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def put(self, id):
         """Edit recipes
 
@@ -296,7 +297,7 @@ class RecipesResource(Resource):
         parser.add_argument('steps', location='json')
         data = parser.parse_args()
 
-        # convert string into dict or list
+        # convert string of dict or list to dict or list
         dataRecipesDict = ast.literal_eval(data['recipes'])
         dataRecipeDetailsDict = ast.literal_eval(data['recipeDetails'])
         dataSteps = ast.literal_eval(data['steps'])
@@ -305,7 +306,6 @@ class RecipesResource(Resource):
         for key in dataRecipesDict:
             if type(dataRecipesDict[key]) == int:
                 continue
-
             # to remove space at end
             dataRecipesDict[key] = dataRecipesDict[key].strip()
             if dataRecipesDict[key] == "":
@@ -445,7 +445,7 @@ class RecipesResource(Resource):
         return {'code': 200, 'message': 'edited'}, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def delete(self, id):
         claims = get_jwt_claims()
         recipe = Recipes.query.get(id)
@@ -479,7 +479,7 @@ class RecipesResource(Resource):
         for review in reviews:
             db.session.delete(review)
 
-        #delete history and brewCount in table user
+        # delete history and brewCount in table user
         histories = History.query.filter_by(recipeID=id).all()
         for history in histories:
             user = Users.query.get(history.userID)
@@ -508,17 +508,19 @@ class RecipesListResource(Resource):
         :type userID: int, optional
         :param methodID: filter by method type
         :type methodID: int, optional
-        :param orderby: order query by a column. i.e rating, difficulty, brewCount
+        :param orderby: order query by a column. i.e rating,
+                        difficulty, brewCount
         :type orderby: string, optional
         :param sort: sort query ascending or descending
         :type sort: string, optional
         :param methods: contain methods that user choose to filter
-        :type methods: string, optional 
-        :>json int pageNow: Page Now 
+        :type methods: string, optional
+        :>json int pageNow: Page Now
         :>json int pageTotal: Total page from query
         :>json dict recipes: dictionary that contains recipe general info
         :>json dict recipeDetails: dictionary that contains recipe detail info
-        :>json array recipeSteps: array that contain dictionary of steps in the recipe     
+        :>json array recipeSteps: array that contain dictionary of steps
+                                  in the recipe
         :status 200: success get data
 
 
@@ -526,7 +528,7 @@ class RecipesListResource(Resource):
 
         .. sourcecode:: http
 
-          GET /recipes/user 
+          GET /recipes/user
           Host: api.coffeology.shop
           Accept: application/json
 
@@ -667,7 +669,7 @@ class RecipesUserResource(Resource):
         return {'code': 200, 'message': 'oke'}, 200
 
     @jwt_required
-    @non_internal_required
+    @nonInternalRequired
     def get(self):
         """Get recipe by userID from token
 
@@ -677,7 +679,7 @@ class RecipesUserResource(Resource):
         :type p: int, optional
         :param rp: Number of entries per page
         :type rp: int, optional
-        :>json int pageNow: Page Now 
+        :>json int pageNow: Page Now
         :>json int pageTotal: Total page from query
         :>json array recipes: array that contains list of recipes
         :status 200: success get recipes
@@ -686,7 +688,7 @@ class RecipesUserResource(Resource):
 
         .. sourcecode:: http
 
-          GET /recipes/user 
+          GET /recipes/user
           Host: api.coffeology.shop
           Accept: application/json
 
