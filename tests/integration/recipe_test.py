@@ -1,6 +1,6 @@
 import json
-from . import app, client, cache, createTokenNonInternal
-from . import createTokenInternal, resetDatabase
+from .. import app, client, cache, createTokenNonInternal
+from .. import createTokenInternal, resetDatabase
 
 
 class TestRecipeCrud():
@@ -8,27 +8,20 @@ class TestRecipeCrud():
     resetDatabase()
     recipeID = 0
 
-# recipe get by id
+    # recipe get by id
     def testRecipeGetByIDValid(self, client):
-        # token = createTokenNonInternal()
-        res = client.get('/recipes/1',
-                         content_type='application/json')
+        res = client.get('/recipes/1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetByIDInvalid(self, client):
-        # token = createTokenNonInternal()
-        res = client.get('/recipes/-1',
-                         content_type='application/json')
+        res = client.get('/recipes/-1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 404
 
-
-# recipe get all
-
-
+    # recipe get all
     def testRecipeGetAllValid(self, client):
         res = client.get('/recipes', content_type='application/json')
 
@@ -42,11 +35,12 @@ class TestRecipeCrud():
             'orderby': 'difficulty',
             'sort': 'asc',
             'search': 'name',
-            'methods' : 1,
-            'origins' : 1,
-            'difficulties' : 1
+            'methods': 1,
+            'origins': 1,
+            'difficulties': 1
         }
-        res = client.get('/recipes', query_string=data,
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -59,71 +53,59 @@ class TestRecipeCrud():
             'orderby': 'rating',
             'sort': 'desc'
         }
-        res = client.get('/recipes', query_string=data,
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_2_1(self, client):
-        data = {
-            'userID': 1,
-            'methodID': 1,
-            'orderby': 'rating',
-            'sort': 'asc'
-        }
-        res = client.get('/recipes', query_string=data,
+        data = {'userID': 1, 'methodID': 1, 'orderby': 'rating', 'sort': 'asc'}
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_3(self, client):
-        data = {
-            'orderby': 'difficulty',
-            'sort': 'asc'
-        }
-        res = client.get('/recipes', query_string=data,
+        data = {'orderby': 'difficulty', 'sort': 'asc'}
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_4(self, client):
-        data = {
-            'orderby': 'difficulty',
-            'sort': 'desc'
-        }
-        res = client.get('/recipes', query_string=data,
+        data = {'orderby': 'difficulty', 'sort': 'desc'}
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_5(self, client):
-        data = {
-            'orderby': 'brewCount',
-            'sort': 'asc'
-        }
-        res = client.get('/recipes', query_string=data,
+        data = {'orderby': 'brewCount', 'sort': 'asc'}
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeGetAllValidUsingParams_6(self, client):
-        data = {
-            'orderby': 'brewCount',
-            'sort': 'desc'
-        }
-        res = client.get('/recipes', query_string=data,
+        data = {'orderby': 'brewCount', 'sort': 'desc'}
+        res = client.get('/recipes',
+                         query_string=data,
                          content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-# recipe post
-
+    # recipe post
     def testRecipePostValid(self, client):
         token = createTokenNonInternal()
         data = {
@@ -134,7 +116,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -152,34 +137,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -195,7 +178,10 @@ class TestRecipeCrud():
                 "beanName": " ",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -213,34 +199,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -256,7 +240,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -274,34 +261,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -317,7 +302,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -335,34 +323,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "  ",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "  ",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -378,7 +364,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -398,7 +387,9 @@ class TestRecipeCrud():
             },
             "steps": []
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -414,7 +405,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -432,34 +426,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -475,7 +467,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -493,34 +488,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -536,7 +529,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -554,34 +550,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": "stepNumber",
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": "stepNumber",
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -597,7 +591,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -615,34 +612,32 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": "salah"
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
@@ -658,7 +653,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -676,41 +674,38 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": "salah"
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": "salah"
+            }]
         }
-        res = client.post('/recipes', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
+        res = client.post('/recipes',
+                          data=json.dumps(data),
+                          headers={'Authorization': 'Bearer ' + token},
                           content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
-# recipe put
-
+    # recipe put
     def testRecipePutValid(self, client):
         token = createTokenNonInternal()
         data = {
@@ -721,7 +716,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -739,35 +737,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
@@ -782,7 +778,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -800,35 +799,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/2', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/2',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 403
@@ -843,7 +840,10 @@ class TestRecipeCrud():
                 "beanName": " ",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -861,35 +861,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -904,7 +902,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -922,35 +923,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -965,7 +964,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -983,35 +985,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "  ",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "  ",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/2', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/2',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1026,7 +1026,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1046,8 +1049,10 @@ class TestRecipeCrud():
             },
             "steps": []
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1062,7 +1067,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1080,35 +1088,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1123,7 +1129,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1141,35 +1150,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1184,7 +1191,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1202,35 +1212,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": "stepNumber",
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": "stepNumber",
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1245,7 +1253,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1263,35 +1274,33 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": "salah"
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
@@ -1306,7 +1315,10 @@ class TestRecipeCrud():
                 "beanName": "beanName",
                 "beanProcess": "beanProcess",
                 "beanRoasting": "beanRoasting",
-                "difficulty": 1, "time": 40, "coffeeWeight": 17, "water": 200
+                "difficulty": 1,
+                "time": 40,
+                "coffeeWeight": 17,
+                "water": 200
             },
             "recipeDetails": {
                 "recipeID": 1,
@@ -1324,63 +1336,57 @@ class TestRecipeCrud():
                 "grindSize": 2,
                 "waterTemp": 93
             },
-            "steps": [
-                {
-                    "recipeID": 1,
-                    "stepNumber": 1,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": 1
-                },
-                {
-                    "recipeID": 1,
-                    "stepNumber": 2,
-                    "stepTypeID": 1,
-                    "note": "note",
-                    "time": 1,
-                    "amount": "salah"
-                }
-            ]
+            "steps": [{
+                "recipeID": 1,
+                "stepNumber": 1,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": 1
+            }, {
+                "recipeID": 1,
+                "stepNumber": 2,
+                "stepTypeID": 1,
+                "note": "note",
+                "time": 1,
+                "amount": "salah"
+            }]
         }
-        res = client.put('/recipes/1', data=json.dumps(data), headers={'Authorization': 'Bearer ' + token},
-                          content_type='application/json')
+        res = client.put('/recipes/1',
+                         data=json.dumps(data),
+                         headers={'Authorization': 'Bearer ' + token},
+                         content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 400
 
-# recipe options
-
+    # recipe options
     def testRecipeOptionsByIDValid(self, client):
-        res = client.options('/recipes/1',
-                             content_type='application/json')
+        res = client.options('/recipes/1', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeOptionsValid(self, client):
-        res = client.options('/recipes',
-                             content_type='application/json')
+        res = client.options('/recipes', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
     def testRecipeUserOptionsValid(self, client):
-        res = client.options('/recipes/user',
-                             content_type='application/json')
+        res = client.options('/recipes/user', content_type='application/json')
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
 
-# recipe user get by token
+    # recipe user get by token
     def testRecipeUserGetValid(self, client):
         token = createTokenNonInternal()
         res = client.get('/recipes/user',
@@ -1389,5 +1395,3 @@ class TestRecipeCrud():
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
-
-

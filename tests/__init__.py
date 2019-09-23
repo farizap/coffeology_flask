@@ -38,8 +38,11 @@ def resetDatabase():
     user = Users("user@user.com", passwordHashed, "name", "photo", "bio")
     admin = Users("admin@admin.com", passwordHashed, "name", "photo", "bio")
     step = Steps(1, 1, 1, "note", 1, 1)
+    step2 = Steps(2, 1, 1, "note", 1, 1)
     recipeDetail = RecipeDetails(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
                                  92)
+    recipeDetail2 = RecipeDetails(2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "note", 2,
+                                  92)
     bean = Beans(5, "nama11", "photo11", 0.4, 0.2, 0.7, 0.1, 0.8, 0.3, 0.5,
                  0.2, 0.45, 0.5, "deskripsi", "cupping", "advatage",
                  "disadvantage", "lokasi")
@@ -48,11 +51,13 @@ def resetDatabase():
     db.session.add(recipe)
     db.session.add(recipe2)
     db.session.add(recipeDetail)
+    db.session.add(recipeDetail2)
     db.session.add(user2)
     db.session.add(user)
     db.session.add(admin)
     admin.role = 1
     db.session.add(step)
+    db.session.add(step2)
     db.session.add(bean)
     db.session.commit()
 
