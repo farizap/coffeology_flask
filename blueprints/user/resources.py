@@ -34,7 +34,7 @@ def isValidPassword(password):
 
 
 def isValidName(name):
-    """to validate name just alphabet"""
+    # to validate name just alphabet
     if re.match(r"^[A-Za-z\s]+$", name):
         return True
     return False

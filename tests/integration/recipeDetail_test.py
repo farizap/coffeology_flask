@@ -1,6 +1,6 @@
 import json
-from . import app, client, cache, createTokenNonInternal
-from . import createTokenInternal, resetDatabase
+from .. import app, client, cache, createTokenNonInternal
+from .. import createTokenInternal, resetDatabase
 
 
 class TestRecipeDetailCrud():

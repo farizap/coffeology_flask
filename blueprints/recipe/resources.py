@@ -584,9 +584,12 @@ class RecipesListResource(Resource):
         parser.add_argument('methodID', type=int, location='args')
         parser.add_argument('orderby',
                             location='args',
-                            choices=('rating', 'difficulty', 'brewCount'))
-        parser.add_argument('sort', location='args', choices=('asc', 'desc'))
-        # Fariz
+                            choices=('rating', 'difficulty', 'difficultyDesc',
+                                     'brewCount'))
+        parser.add_argument('sort',
+                            location='args',
+                            choices=('asc', 'desc'),
+                            default='desc')
         parser.add_argument('methods', location='args')
         parser.add_argument('search', location='args')
         parser.add_argument('origins', location='args')
@@ -597,9 +600,9 @@ class RecipesListResource(Resource):
         offset = (data['p'] * data['rp']) - data['rp']
 
         recipeQry = Recipes.query
-        recipeQry = recipeQry.order_by(desc(Recipes.id))
+        if data['orderby'] is None:
+            recipeQry = recipeQry.order_by(desc(Recipes.id))
 
-        # Fariz
         # filter by search
         if data['search'] is not None:
             recipeQry = recipeQry.filter(
@@ -634,11 +637,11 @@ class RecipesListResource(Resource):
                     recipeQry = recipeQry.order_by(desc(Recipes.rating))
                 else:
                     recipeQry = recipeQry.order_by((Recipes.rating))
-            elif data['orderby'] == 'difficulty':
+            elif data['orderby'] == 'difficultyDesc':
                 if data['sort'] == 'desc':
                     recipeQry = recipeQry.order_by(desc(Recipes.difficulty))
-                else:
-                    recipeQry = recipeQry.order_by((Recipes.difficulty))
+            elif data['orderby'] == 'difficulty':
+                recipeQry = recipeQry.order_by((Recipes.difficulty))
             elif data['orderby'] == 'brewCount':
                 if data['sort'] == 'desc':
                     recipeQry = recipeQry.order_by(desc(Recipes.brewCount))
